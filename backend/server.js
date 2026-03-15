@@ -15,12 +15,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 // ── Serve Frontend Static Files ──────────────────────────
-// This serves the frontend directly from Express, preserving
-// all query parameters (e.g., ?category=clothing)
-app.use(express.static(path.join(__dirname, '..', 'frontend'), {
+// Preserving query parameters for collections
+const frontendPath = path.join(__dirname, '..', 'frontend');
+app.use(express.static(frontendPath, {
   extensions: ['html'],
   index: 'index.html',
 }));

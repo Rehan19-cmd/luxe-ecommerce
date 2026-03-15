@@ -2,7 +2,9 @@
    API Helper — Fetch products, categories, etc.
    ══════════════════════════════════════════════════════════ */
 
-const API_BASE = window.location.port === '5173' ? 'http://localhost:5000/api' : '/api';
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? 'http://localhost:5000/api' 
+  : '/api'; // In production, frontend is served by the same backend
 
 const api = {
   async get(endpoint) {
