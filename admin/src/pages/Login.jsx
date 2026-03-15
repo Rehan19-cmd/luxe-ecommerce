@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import axios from 'axios';
-
-const API = 'http://localhost:5000/api';
+import { useState } from 'react'
+import axios from 'axios'
+import { API } from '../config'
+;
 
 export default function Login({ onLogin }) {
   const [password, setPassword] = useState('');
