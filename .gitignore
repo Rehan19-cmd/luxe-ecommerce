@@ -13,3 +13,4 @@ mongodb/
 *.exe
 *.zip
 Check.log
+DEPLOYMENT.md
