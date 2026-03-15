@@ -49,8 +49,13 @@
       </p>
       <div class="product-detail__grid">
         <div class="product-detail__gallery">
-          <div class="product-detail__main-image">
-            <img id="mainImage" src="" alt="Product Image" />
+          <div class="product-detail__main-image-wrapper">
+            <div class="product-detail__slides" id="pdSlides">
+              <!-- Slides will be injected here -->
+            </div>
+          </div>
+          <div class="product-detail__thumbnails" id="pdThumbs">
+            <!-- Thumbnails will be injected here -->
           </div>
         </div>
         <div class="product-detail__info">
@@ -145,6 +150,13 @@
       const slug = new URLSearchParams(window.location.search).get('slug');
       let product = null;
       let qty = 1;
+      let activeSlideIndex = 0;
+
+      function getFullImgPath(p) {
+        if (!p) return '/images/placeholder.jpg';
+        if (p.startsWith('http')) return p;
+        return p; // api.js already handles potential prefixing if needed, but here we expect /uploads/...
+      }
 
       async function loadProduct() {
         if (!slug) return;
@@ -153,8 +165,53 @@
 
         document.title = `${product.name} — LUXE`;
         document.getElementById('breadcrumbName').textContent = product.name;
-        document.getElementById('mainImage').src = product.images?.[0] || '';
-        document.getElementById('mainImage').alt = product.name;
+        
+        // Slideshow Implementation
+        const slideContainer = document.getElementById('pdSlides');
+        const thumbContainer = document.getElementById('pdThumbs');
+        const images = product.images && product.images.length ? product.images : ['/images/placeholder.jpg'];
+        
+        slideContainer.innerHTML = images.map((img, i) => `
+          <div class="product-detail__slide ${i === 0 ? 'active' : ''}" data-index="${i}">
+            <img src="${getFullImgPath(img)}" alt="${product.name}" />
+          </div>
+        `).join('');
+
+        if (images.length > 1) {
+          thumbContainer.innerHTML = images.map((img, i) => `
+            <div class="product-detail__thumb ${i === 0 ? 'active' : ''}" data-index="${i}">
+              <img src="${getFullImgPath(img)}" alt="" />
+            </div>
+          `).join('');
+
+          document.querySelectorAll('.product-detail__thumb').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+              const idx = parseInt(this.dataset.index);
+              if (idx === activeSlideIndex) return;
+              changeSlide(idx);
+            });
+          });
+        }
+
+        function changeSlide(idx) {
+          const slides = document.querySelectorAll('.product-detail__slide');
+          const thumbs = document.querySelectorAll('.product-detail__thumb');
+          
+          // GSAP Crossfade
+          gsap.to(slides[activeSlideIndex], { opacity: 0, duration: 0.5 });
+          gsap.to(slides[idx], { opacity: 1, duration: 0.5 });
+          
+          slides[activeSlideIndex].classList.remove('active');
+          slides[idx].classList.add('active');
+          
+          if (thumbs.length) {
+            thumbs[activeSlideIndex].classList.remove('active');
+            thumbs[idx].classList.add('active');
+          }
+          
+          activeSlideIndex = idx;
+        }
+
         document.getElementById('pdCategory').textContent = product.category;
         document.getElementById('pdName').textContent = product.name;
         document.getElementById('pdPrice').textContent = '$' + product.price.toLocaleString();

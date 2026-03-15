@@ -157,8 +157,14 @@ function createProductCard(product) {
     ? `<span class="product-card__price-compare">$${product.comparePrice.toLocaleString()}</span>` : '';
 
   const imgSrc = product.images?.[0] || '';
+  const getFullImgPath = (p) => {
+    if (!p) return '/images/placeholder.jpg';
+    if (p.startsWith('http')) return p;
+    return p; // Browser resolves relative paths like /uploads/... correctly relative to the root
+  };
+
   const imgHTML = imgSrc 
-    ? `<img src="${imgSrc}" alt="${product.name}" loading="lazy" />`
+    ? `<img src="${getFullImgPath(imgSrc)}" alt="${product.name}" loading="lazy" />`
     : `<div class="product-card__placeholder">💎</div>`;
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;

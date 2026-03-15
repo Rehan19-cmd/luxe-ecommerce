@@ -2,12 +2,23 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const API = 'http://localhost:5000/api'
+const SERVER_URL = 'http://localhost:5000'
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', description: '', price: '', comparePrice: '', discountPercent: '', category: 'jewelry', subcategory: '', tags: '', stock: '', material: '', weight: '', featured: false, trending: false, offer: false, images: '' })
+  
+  // New state for handling uploads
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const [existingImages, setExistingImages] = useState([])
+  
+  const [form, setForm] = useState({ 
+    name: '', description: '', price: '', comparePrice: '', 
+    discountPercent: '', category: 'jewelry', subcategory: '', 
+    tags: '', stock: '', material: '', weight: '', 
+    featured: false, trending: false, offer: false 
+  })
 
   const fetchProducts = () => axios.get(`${API}/products`).then(r => setProducts(r.data.products || [])).catch(err => console.error('Fetch error:', err))
 
@@ -15,62 +26,78 @@ export default function Products() {
 
   const openNew = () => {
     setEditing(null)
-    setForm({ name: '', description: '', price: '', comparePrice: '', discountPercent: '', category: 'jewelry', subcategory: '', tags: '', stock: '', material: '', weight: '', featured: false, trending: false, offer: false, images: '' })
+    setForm({ name: '', description: '', price: '', comparePrice: '', discountPercent: '', category: 'jewelry', subcategory: '', tags: '', stock: '', material: '', weight: '', featured: false, trending: false, offer: false })
+    setSelectedFiles([])
+    setExistingImages([])
     setShowModal(true)
   }
 
   const openEdit = (p) => {
     setEditing(p._id)
     const discount = p.comparePrice && p.comparePrice > p.price ? Math.round((1 - p.price / p.comparePrice) * 100) : ''
-    setForm({ name: p.name, description: p.description || '', price: p.price, comparePrice: p.comparePrice || '', discountPercent: discount, category: p.category, subcategory: p.subcategory || '', tags: p.tags?.join(', ') || '', stock: p.stock, material: p.material || '', weight: p.weight || '', featured: p.featured, trending: p.trending, offer: p.offer || false, images: p.images?.join(', ') || '' })
+    setForm({ 
+      name: p.name, description: p.description || '', price: p.price, 
+      comparePrice: p.comparePrice || '', discountPercent: discount, 
+      category: p.category, subcategory: p.subcategory || '', 
+      tags: p.tags?.join(', ') || '', stock: p.stock, 
+      material: p.material || '', weight: p.weight || '', 
+      featured: p.featured, trending: p.trending, offer: p.offer || false 
+    })
+    setSelectedFiles([])
+    setExistingImages(p.images || [])
     setShowModal(true)
   }
 
-  // When discount % changes, auto-calculate compare price
-  const handleDiscountChange = (val) => {
-    const disc = Number(val) || 0
-    const price = Number(form.price) || 0
-    let comparePrice = ''
-    if (disc > 0 && price > 0) {
-      comparePrice = Math.round(price / (1 - disc / 100))
-    }
-    setForm({ ...form, discountPercent: val, comparePrice: comparePrice.toString() })
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files)
+    setSelectedFiles([...selectedFiles, ...files])
   }
 
-  // When price changes, recalculate compare price if discount exists
-  const handlePriceChange = (val) => {
-    const price = Number(val) || 0
-    const disc = Number(form.discountPercent) || 0
-    let comparePrice = form.comparePrice
-    if (disc > 0 && price > 0) {
-      comparePrice = Math.round(price / (1 - disc / 100)).toString()
-    }
-    setForm({ ...form, price: val, comparePrice })
+  const removeSelectedFile = (index) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index))
+  }
+
+  const removeExistingImage = (img) => {
+    setExistingImages(existingImages.filter(i => i !== img))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const payload = {
-      name: form.name,
-      description: form.description,
-      price: Number(form.price),
-      comparePrice: Number(form.comparePrice) || 0,
-      category: form.category,
-      subcategory: form.subcategory,
-      stock: Number(form.stock) || 0,
-      material: form.material,
-      weight: form.weight,
-      featured: form.featured,
-      trending: form.trending,
-      offer: form.offer,
-      tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
-      images: form.images.split(',').map(t => t.trim()).filter(Boolean),
-    }
+    
+    const formData = new FormData()
+    formData.append('name', form.name)
+    formData.append('description', form.description)
+    formData.append('price', form.price)
+    formData.append('comparePrice', form.comparePrice || 0)
+    formData.append('category', form.category)
+    formData.append('subcategory', form.subcategory)
+    formData.append('stock', form.stock || 0)
+    formData.append('material', form.material)
+    formData.append('weight', form.weight)
+    formData.append('featured', form.featured)
+    formData.append('trending', form.trending)
+    formData.append('offer', form.offer)
+    
+    // Add tags
+    const tagsArr = form.tags.split(',').map(t => t.trim()).filter(Boolean)
+    tagsArr.forEach(tag => formData.append('tags[]', tag))
+    
+    // Add existing images (that wasn't removed)
+    existingImages.forEach(img => formData.append('images[]', img))
+    
+    // Add new files
+    selectedFiles.forEach(file => {
+      formData.append('images', file) // This matches the multer upload.array('images', 5)
+    })
+
     try {
+      const config = {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }
       if (editing) {
-        await axios.put(`${API}/products/${editing}`, payload)
+        await axios.put(`${API}/products/${editing}`, formData, config)
       } else {
-        await axios.post(`${API}/products`, payload)
+        await axios.post(`${API}/products`, formData, config)
       }
       setShowModal(false)
       fetchProducts()
@@ -91,6 +118,12 @@ export default function Products() {
     }
   }
 
+  const getFullImgPath = (path) => {
+    if (!path) return ''
+    if (path.startsWith('http')) return path
+    return `${SERVER_URL}${path}`
+  }
+
   return (
     <>
       <h1 className="page-title">Products</h1>
@@ -108,7 +141,7 @@ export default function Products() {
           <tbody>
             {products.map(p => (
               <tr key={p._id} style={p.stock <= 0 ? { opacity: 0.5, background: 'rgba(255,68,68,0.05)' } : {}}>
-                <td>{p.images?.[0] ? <img className="data-table__img" src={p.images[0]} alt="" /> : '—'}</td>
+                <td>{p.images?.[0] ? <img className="data-table__img" src={getFullImgPath(p.images[0])} alt="" /> : '—'}</td>
                 <td><strong>{p.name}</strong></td>
                 <td><span className="badge badge-info">{p.category}</span></td>
                 <td style={{ color: 'var(--gold)' }}>
@@ -155,40 +188,43 @@ export default function Products() {
                   <label className="form-label">Description</label>
                   <textarea className="form-textarea" value={form.description} onChange={e => setForm({...form, description: e.target.value})}></textarea>
                 </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Product Images</label>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                    {/* Existing Images */}
+                    {existingImages.map((img, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', border: '1px solid var(--gold)', borderRadius: '4px' }}>
+                        <img src={getFullImgPath(img)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        <button type="button" onClick={() => removeExistingImage(img)} style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px' }}>&times;</button>
+                      </div>
+                    ))}
+                    {/* New Selected Files */}
+                    {selectedFiles.map((file, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', border: '1px solid var(--primary)', borderRadius: '4px' }}>
+                        <img src={URL.createObjectURL(file)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        <button type="button" onClick={() => removeSelectedFile(idx)} style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px' }}>&times;</button>
+                      </div>
+                    ))}
+                    {/* Add More Button */}
+                    <label style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed var(--gray-dark)', borderRadius: '4px', cursor: 'pointer', fontSize: '1.5rem', color: 'var(--gray)' }}>
+                      +
+                      <input type="file" multiple accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+                    </label>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--gray)' }}>Upload high-quality jewelry & clothing photos. Multiple selection supported.</p>
+                </div>
+
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Price ($)</label>
-                    <input className="form-input" type="number" value={form.price} onChange={e => handlePriceChange(e.target.value)} required />
+                    <input className="form-input" type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} required />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Compare Price ($)</label>
                     <input className="form-input" type="number" value={form.comparePrice} onChange={e => setForm({...form, comparePrice: e.target.value})} />
                   </div>
                 </div>
-
-                {/* Discount Section — only shown when Offer is checked */}
-                {form.offer && (
-                  <div className="form-group" style={{ background: 'rgba(231, 76, 60, 0.08)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(231, 76, 60, 0.2)' }}>
-                    <label className="form-label" style={{ color: '#e74c3c', fontWeight: 600 }}>🏷️ Discount Percentage (%)</label>
-                    <input
-                      className="form-input"
-                      type="number"
-                      min="0"
-                      max="99"
-                      placeholder="e.g. 20 for 20% off"
-                      value={form.discountPercent}
-                      onChange={e => handleDiscountChange(e.target.value)}
-                      style={{ borderColor: 'rgba(231, 76, 60, 0.3)' }}
-                    />
-                    {form.discountPercent && Number(form.price) > 0 && (
-                      <p style={{ fontSize: '0.8rem', color: 'var(--gray-light)', marginTop: 8 }}>
-                        Original price will show as <strong style={{ color: 'var(--gold)' }}>${form.comparePrice}</strong> (struck through)
-                        → Sale price <strong style={{ color: '#2ecc71' }}>${form.price}</strong>
-                        = <strong style={{ color: '#e74c3c' }}>{form.discountPercent}% OFF</strong>
-                      </p>
-                    )}
-                  </div>
-                )}
 
                 <div className="form-row">
                   <div className="form-group">
@@ -206,9 +242,6 @@ export default function Products() {
                 <div className="form-group">
                   <label className="form-label">Stock</label>
                   <input className="form-input" type="number" value={form.stock} onChange={e => setForm({...form, stock: e.target.value})} />
-                  {Number(form.stock) <= 0 && form.stock !== '' && (
-                    <p style={{ fontSize: '0.8rem', color: '#ff4444', marginTop: 4 }}>⚠ Product will appear as SOLD OUT on the website</p>
-                  )}
                 </div>
                 <div className="form-row">
                   <div className="form-group">
@@ -224,10 +257,7 @@ export default function Products() {
                   <label className="form-label">Tags (comma-separated)</label>
                   <input className="form-input" value={form.tags} onChange={e => setForm({...form, tags: e.target.value})} placeholder="diamond, gold, bridal" />
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Image URLs (comma-separated)</label>
-                  <input className="form-input" value={form.images} onChange={e => setForm({...form, images: e.target.value})} placeholder="https://example.com/image.jpg" />
-                </div>
+                
                 <div className="form-row" style={{ gap: '24px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                     <input type="checkbox" checked={form.featured} onChange={e => setForm({...form, featured: e.target.checked})} /> ⭐ Featured

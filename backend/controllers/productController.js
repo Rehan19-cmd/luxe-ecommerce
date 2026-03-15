@@ -59,9 +59,26 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     const uploadedImages = req.files ? req.files.map((f) => `/uploads/${f.filename}`) : [];
-    const bodyImages = Array.isArray(req.body.images) ? req.body.images : (typeof req.body.images === 'string' && req.body.images ? [req.body.images] : []);
-    const allImages = [...uploadedImages, ...bodyImages].filter(Boolean);
-    const product = new Product({ ...req.body, images: allImages });
+    
+    // Handle existing images and tags which might come as 'images[]'/'images' or 'tags[]'/'tags'
+    let bodyImages = req.body.images || req.body['images[]'] || [];
+    if (!Array.isArray(bodyImages)) bodyImages = [bodyImages];
+    
+    let tags = req.body.tags || req.body['tags[]'] || [];
+    if (!Array.isArray(tags)) tags = [tags];
+
+    const allImages = [...bodyImages, ...uploadedImages].filter(Boolean);
+    
+    const productData = {
+      ...req.body,
+      images: allImages,
+      tags: tags.map(t => t.trim()).filter(Boolean),
+      price: Number(req.body.price),
+      comparePrice: Number(req.body.comparePrice) || 0,
+      stock: Number(req.body.stock) || 0
+    };
+
+    const product = new Product(productData);
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -72,12 +89,23 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const uploadedImages = req.files ? req.files.map((f) => `/uploads/${f.filename}`) : [];
+    
     const updates = { ...req.body };
-    // Handle images: merge uploaded files with body images
-    if (uploadedImages.length) {
-      const bodyImages = Array.isArray(updates.images) ? updates.images : [];
-      updates.images = [...bodyImages, ...uploadedImages];
-    }
+    
+    // Handle existing images and tags
+    let bodyImages = req.body.images || req.body['images[]'] || [];
+    if (!Array.isArray(bodyImages)) bodyImages = [bodyImages];
+    
+    let tags = req.body.tags || req.body['tags[]'] || [];
+    if (!Array.isArray(tags)) tags = [tags];
+
+    updates.images = [...bodyImages, ...uploadedImages].filter(Boolean);
+    updates.tags = tags.map(t => t.trim()).filter(Boolean);
+    
+    if (updates.price) updates.price = Number(updates.price);
+    if (updates.comparePrice) updates.comparePrice = Number(updates.comparePrice) || 0;
+    if (updates.stock) updates.stock = Number(updates.stock) || 0;
+
     const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json(product);
