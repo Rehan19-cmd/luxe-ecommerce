@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product — LUXE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <nav class="nav scrolled" id="nav">
+    <a href="index.html" class="nav__logo"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span></a>
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="collection.html" class="nav__link">Collections</a></li>
+      <li><a href="index.html#featured" class="nav__link">Featured</a></li>
+      <li><a href="collection.html?category=clothing" class="nav__link">Clothing</a></li>
+      <li><a href="index.html#contact" class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="nav__cart-count" id="cartCount">0</span>
+      </button>
+      <button class="nav__menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul class="mobile-menu__links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="collection.html">Collections</a></li>
+      <li><a href="collection.html?category=clothing">Clothing</a></li>
+    </ul>
+  </div>
+
+  <section class="product-detail" id="productDetail">
+    <div class="container">
+      <p class="page-header__breadcrumb" style="margin-bottom:30px;">
+        <a href="index.html">Home</a> / <a href="collection.html">Collections</a> / <span id="breadcrumbName">Product</span>
+      </p>
+      <div class="product-detail__grid">
+        <div class="product-detail__gallery">
+          <div class="product-detail__main-image">
+            <img id="mainImage" src="" alt="Product Image" />
+          </div>
+        </div>
+        <div class="product-detail__info">
+          <div class="product-detail__category" id="pdCategory"></div>
+          <h1 class="product-detail__name" id="pdName"></h1>
+          <div class="product-detail__price">
+            <span class="product-detail__price-current" id="pdPrice"></span>
+            <span class="product-detail__price-compare" id="pdCompare"></span>
+          </div>
+          <div class="product-detail__rating" style="margin-bottom:20px;">
+            <span class="product-card__stars" id="pdStars"></span>
+            <span id="pdReviews"></span>
+          </div>
+          <p class="product-detail__desc" id="pdDesc"></p>
+          <div class="product-detail__meta" id="pdMeta"></div>
+          <div class="product-detail__actions">
+            <div class="product-detail__qty">
+              <button id="qtyMinus">−</button>
+              <span id="qtyDisplay">1</span>
+              <button id="qtyPlus">+</button>
+            </div>
+            <button class="btn btn--primary" id="addToCartBtn">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Products -->
+  <section class="featured" style="padding:80px 0 120px;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">You May Also Like</span>
+        <h2 class="section-title">Related Pieces</h2>
+      </div>
+      <div class="featured__grid" id="relatedGrid"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span><p class="footer__tagline">Where elegance meets eternity.</p></div>
+        <div class="footer__col"><h4>Shop</h4><a href="collection.html?category=jewelry">Jewelry</a><a href="collection.html?category=clothing">Clothing</a></div>
+        <div class="footer__col"><h4>Company</h4><a href="index.html#about">Our Story</a><a href="index.html#contact">Contact</a></div>
+
+      </div>
+      <div class="footer__bottom"><p>&copy; 2025 LUXE. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header"><h3>Your Cart</h3><button class="cart-drawer__close" id="cartClose">&times;</button></div>
+    <div class="cart-drawer__items" id="cartItems"><p class="cart-drawer__empty">Your cart is empty</p></div>
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__total"><span>Total</span><span id="cartTotal">$0</span></div>
+      <a href="cart.html" class="btn btn--primary btn--full">View Cart</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <script src="js/api.js"></script>
+  <script>
+    (function() {
+      const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      lenis.on('scroll', ScrollTrigger.update);
+
+      // Cursor
+      const cursor = document.getElementById('cursor'), follower = document.getElementById('cursorFollower');
+      if (cursor && follower) {
+        let cx=0,cy=0,fx=0,fy=0;
+        document.addEventListener('mousemove', e => { cx=e.clientX; cy=e.clientY; });
+        (function u(){ fx+=(cx-fx)*0.15; fy+=(cy-fy)*0.15; cursor.style.left=cx+'px'; cursor.style.top=cy+'px'; follower.style.left=fx+'px'; follower.style.top=fy+'px'; requestAnimationFrame(u); })();
+        document.querySelectorAll('a,button,input,.product-card').forEach(el => {
+          el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); follower.classList.add('hovering'); });
+          el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); follower.classList.remove('hovering'); });
+        });
+      }
+
+      // Mobile menu
+      const menuToggle = document.getElementById('menuToggle'), mobileMenu = document.getElementById('mobileMenu');
+      menuToggle?.addEventListener('click', () => { menuToggle.classList.toggle('active'); mobileMenu.classList.toggle('active'); });
+
+      // Cart drawer
+      document.getElementById('cartBtn')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.add('active'); document.getElementById('cartOverlay')?.classList.add('active'); });
+      document.getElementById('cartClose')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
+      document.getElementById('cartOverlay')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
+
+      // Load product
+      const slug = new URLSearchParams(window.location.search).get('slug');
+      let product = null;
+      let qty = 1;
+
+      async function loadProduct() {
+        if (!slug) return;
+        product = await api.getProductBySlug(slug);
+        if (!product) { document.getElementById('pdName').textContent = 'Product not found'; return; }
+
+        document.title = `${product.name} — LUXE`;
+        document.getElementById('breadcrumbName').textContent = product.name;
+        document.getElementById('mainImage').src = product.images?.[0] || '';
+        document.getElementById('mainImage').alt = product.name;
+        document.getElementById('pdCategory').textContent = product.category;
+        document.getElementById('pdName').textContent = product.name;
+        document.getElementById('pdPrice').textContent = '$' + product.price.toLocaleString();
+        document.getElementById('pdCompare').textContent = product.comparePrice && product.comparePrice > product.price ? '$' + product.comparePrice.toLocaleString() : '';
+        document.getElementById('pdDesc').textContent = product.description;
+
+        const stars = '★'.repeat(Math.round(product.rating || 0)) + '☆'.repeat(5 - Math.round(product.rating || 0));
+        document.getElementById('pdStars').textContent = stars;
+        document.getElementById('pdReviews').textContent = `(${product.reviewCount || 0} reviews)`;
+
+        // Meta
+        const meta = document.getElementById('pdMeta');
+        const rows = [
+          product.material && { label: 'Material', value: product.material },
+          product.weight && { label: 'Weight', value: product.weight },
+          product.stock !== undefined && { label: 'Availability', value: product.stock > 0 ? `In Stock (${product.stock} left)` : 'Out of Stock' },
+          product.seller?.name && { label: 'By', value: product.seller.brand || product.seller.name },
+        ].filter(Boolean);
+        meta.innerHTML = rows.map(r => `<div class="product-detail__meta-row"><span class="product-detail__meta-label">${r.label}</span><span class="product-detail__meta-value">${r.value}</span></div>`).join('');
+
+        // Entrance animation
+        gsap.from('.product-detail__gallery', { opacity: 0, x: -40, duration: 0.8, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.product-detail__info', { opacity: 0, x: 40, duration: 0.8, ease: 'power3.out', delay: 0.3 });
+
+        // Load related products
+        const related = await api.getProducts({ category: product.category, limit: 4 });
+        const relatedGrid = document.getElementById('relatedGrid');
+        if (related?.products) {
+          related.products.filter(p => p._id !== product._id).slice(0, 4).forEach(p => relatedGrid.appendChild(createProductCard(p)));
+        }
+      }
+
+      // Qty controls
+      document.getElementById('qtyMinus')?.addEventListener('click', () => { if (qty > 1) { qty--; document.getElementById('qtyDisplay').textContent = qty; } });
+      document.getElementById('qtyPlus')?.addEventListener('click', () => { qty++; document.getElementById('qtyDisplay').textContent = qty; });
+
+      document.getElementById('addToCartBtn')?.addEventListener('click', () => {
+        if (!product) return;
+        cart.addItem({ id: product._id, name: product.name, price: product.price, image: product.images?.[0] || '', slug: product.slug }, qty);
+        // Open cart drawer on add
+        document.getElementById('cartDrawer')?.classList.add('active');
+        document.getElementById('cartOverlay')?.classList.add('active');
+      });
+
+      cart.updateUI();
+      loadProduct();
+    })();
+  </script>
+</body>
+</html>

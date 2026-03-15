@@ -1,0 +1,7 @@
+--- PHASE 3: FAKE ORDER TEST ---
+Fetching products...
+Selected product: daddadasd (Stock: 1)
+Creating fake order...
+Test failed: {
+  error: 'Order validation failed: totalAmount: Path `totalAmount` is required.'
+}

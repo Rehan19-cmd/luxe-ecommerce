@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXE — Premium Jewelry & Clothing</title>
+  <meta name="description" content="Discover exquisite handcrafted jewelry and designer clothing from the world's finest artisans. LUXE — where elegance meets eternity." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- GSAP & Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Lenis -->
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════ LOADER ═══════════ -->
+  <div id="loader" class="loader">
+    <div class="loader__inner">
+      <div class="loader__diamond"></div>
+      <span class="loader__text">LUXE</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ CURSOR ═══════════ -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <nav class="nav" id="nav">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-icon">◆</span>
+      <span class="nav__logo-text">LUXE</span>
+    </a>
+    <ul class="nav__links">
+      <li><a href="#home" class="nav__link active">Home</a></li>
+      <li><a href="collection.html" class="nav__link">Collections</a></li>
+      <li><a href="#featured" class="nav__link">Featured</a></li>
+      <li><a href="collection.html?category=clothing" class="nav__link">Clothing</a></li>
+      <li><a href="#contact" class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="nav__cart-count" id="cartCount">0</span>
+      </button>
+      <button class="nav__menu-toggle" id="menuToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════ MOBILE MENU ═══════════ -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul class="mobile-menu__links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="collection.html">Collections</a></li>
+      <li><a href="#featured">Featured</a></li>
+      <li><a href="collection.html?category=clothing">Clothing</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero" id="home">
+    <canvas id="heroCanvas" class="hero__canvas"></canvas>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <h1 class="hero__title">
+        <span class="hero__title-line reveal-text">Where Elegance</span>
+        <span class="hero__title-line hero__title-line--italic reveal-text">Meets Eternity</span>
+      </h1>
+      <p class="hero__desc reveal-text">Curated collections of the world's finest jewelry and designer clothing, crafted by legendary artisans.</p>
+      <div class="hero__cta reveal-text">
+        <a href="collection.html" class="btn btn--primary">Explore Collection</a>
+        <a href="#featured" class="btn btn--ghost">View Lookbook</a>
+      </div>
+    </div>
+    <div class="hero__scroll-indicator">
+      <span>Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CATEGORIES ═══════════ -->
+  <section class="categories" id="categories">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag reveal-text">Our Craft</span>
+        <h2 class="section-title reveal-text">Curated Categories</h2>
+      </div>
+      <div class="categories__grid">
+        <a href="collection.html?category=jewelry" class="category-card reveal-up" id="catJewelry">
+          <div class="category-card__image">
+            <img src="images/jewelry-collection.png" alt="Jewelry Collection" loading="lazy" />
+          </div>
+          <div class="category-card__overlay">
+            <h3>Fine Jewelry</h3>
+            <span class="category-card__arrow">→</span>
+          </div>
+        </a>
+        <a href="collection.html?category=clothing" class="category-card reveal-up" id="catClothing">
+          <div class="category-card__image">
+            <img src="images/sari-clothing.png" alt="Clothing Collection" loading="lazy" />
+          </div>
+          <div class="category-card__overlay">
+            <h3>Designer Clothing</h3>
+            <span class="category-card__arrow">→</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FEATURED PRODUCTS ═══════════ -->
+  <section class="featured" id="featured">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag reveal-text">Curated Selection</span>
+        <h2 class="section-title reveal-text">Featured Pieces</h2>
+      </div>
+      <div class="featured__grid" id="featuredGrid">
+        <!-- Dynamically populated from API -->
+      </div>
+      <div class="featured__cta reveal-up">
+        <a href="collection.html" class="btn btn--primary">View All Collections</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SPECIAL OFFERS ═══════════ -->
+  <section class="special-offers" id="specialOffers">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag reveal-text">Limited Time</span>
+        <h2 class="section-title reveal-text">Special Offers</h2>
+      </div>
+      <!-- Dynamic offers from database (populated by app.js) -->
+      <div class="special-offers__grid" id="offersGrid"></div>
+      <!-- Static promo cards (shown only when no dynamic offers exist) -->
+      <div class="special-offers__grid" id="staticOffers">
+        <div class="offer-card reveal-up">
+          <div class="offer-card__badge">20% OFF</div>
+          <div class="offer-card__icon">💎</div>
+          <h3 class="offer-card__title">Diamond Collection</h3>
+          <p class="offer-card__desc">Get 20% off on all diamond pieces. Use code <strong>DIAMOND20</strong> at checkout.</p>
+          <span class="offer-card__validity">Valid until March 31, 2025</span>
+          <a href="collection.html?category=jewelry" class="btn btn--primary">Shop Now</a>
+        </div>
+        <div class="offer-card offer-card--highlight reveal-up">
+          <div class="offer-card__badge">BUY 2 GET 1</div>
+          <div class="offer-card__icon">👗</div>
+          <h3 class="offer-card__title">Designer Sarees</h3>
+          <p class="offer-card__desc">Buy any 2 designer sarees and get 1 free. Limited stock available.</p>
+          <span class="offer-card__validity">While stocks last</span>
+          <a href="collection.html?category=clothing" class="btn btn--primary">Shop Now</a>
+        </div>
+        <div class="offer-card reveal-up">
+          <div class="offer-card__badge">FREE SHIPPING</div>
+          <div class="offer-card__icon">✨</div>
+          <h3 class="offer-card__title">Orders Over $500</h3>
+          <p class="offer-card__desc">Enjoy complimentary shipping on all orders over $500. No code needed.</p>
+          <span class="offer-card__validity">Ongoing offer</span>
+          <a href="collection.html" class="btn btn--ghost">Browse All</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PARALLAX BANNER ═══════════ -->
+  <section class="parallax-banner">
+    <div class="parallax-banner__bg" style="background-image:url('https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1920')"></div>
+    <div class="parallax-banner__content">
+      <span class="parallax-banner__sub reveal-text">The Art of Luxury</span>
+      <h2 class="parallax-banner__title reveal-text">Crafted to Perfection</h2>
+      <p class="parallax-banner__desc reveal-text">Every piece tells a story of mastery, tradition, and timeless beauty.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ TRENDING ═══════════ -->
+  <section class="trending" id="trending">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag reveal-text">What's Hot</span>
+        <h2 class="section-title reveal-text">Trending Now</h2>
+      </div>
+      <div class="trending__slider" id="trendingSlider">
+        <!-- Dynamically populated from API -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ NEWSLETTER ═══════════ -->
+  <section class="newsletter" id="contact">
+    <div class="container">
+      <div class="newsletter__inner reveal-up">
+        <div class="newsletter__text">
+          <span class="section-tag">Stay Connected</span>
+          <h2 class="section-title">Join the Inner Circle</h2>
+          <p>Be the first to discover new collections, exclusive offers, and private events.</p>
+        </div>
+        <form class="newsletter__form" id="newsletterForm">
+          <input type="email" placeholder="Enter your email" class="newsletter__input" required />
+          <button type="submit" class="btn btn--primary">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <span class="nav__logo-icon">◆</span>
+          <span class="nav__logo-text">LUXE</span>
+          <p class="footer__tagline">Where elegance meets eternity.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Shop</h4>
+          <a href="collection.html?category=jewelry">Jewelry</a>
+          <a href="collection.html?category=clothing">Clothing</a>
+          <a href="collection.html">New Arrivals</a>
+        </div>
+        <div class="footer__col">
+          <h4>Company</h4>
+          <a href="#">Our Story</a>
+          <a href="#">Careers</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2025 LUXE. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════ CART DRAWER ═══════════ -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+      <h3>Your Cart</h3>
+      <button class="cart-drawer__close" id="cartClose">&times;</button>
+    </div>
+    <div class="cart-drawer__items" id="cartItems">
+      <p class="cart-drawer__empty">Your cart is empty</p>
+    </div>
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__total">
+        <span>Total</span>
+        <span id="cartTotal">$0</span>
+      </div>
+      <a href="cart.html" class="btn btn--primary btn--full">View Cart</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/three-hero.js"></script>
+  <script src="js/scroll-bg.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
