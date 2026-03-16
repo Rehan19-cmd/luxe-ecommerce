@@ -8,7 +8,7 @@ import Homepage from './pages/Homepage'
 import SpecialOffers from './pages/SpecialOffers'
 import Login from './pages/Login'
 
-function Sidebar() {
+function Sidebar({ onLogout }) {
   return (
     <aside className="sidebar">
       <div className="sidebar__logo">
@@ -48,15 +48,53 @@ function Sidebar() {
           </NavLink>
         </li>
       </ul>
+      <div style={{ marginTop: 'auto', padding: '1.5rem' }}>
+        <button 
+          className="btn btn-outline" 
+          onClick={onLogout} 
+          style={{ width: '100%', borderColor: 'var(--danger)', color: 'var(--danger)' }}
+        >
+          Logout
+        </button>
+      </div>
     </aside>
   )
 }
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('adminToken'));
+
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      localStorage.setItem('adminToken', token);
+    } else {
+      delete axios.defaults.headers.common['Authorization'];
+      localStorage.removeItem('adminToken');
+    }
+
+    // Intercept 401s globally to force a logout if token expires
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          setToken(null);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => axios.interceptors.response.eject(interceptor);
+  }, [token]);
+
+  if (!token) {
+    return <Login onLogin={setToken} />;
+  }
+
   return (
     <BrowserRouter basename="/admin">
       <div className="layout">
-        <Sidebar />
+        <Sidebar onLogout={() => setToken(null)} />
         <main className="main">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -70,4 +108,3 @@ export default function App() {
     </BrowserRouter>
   )
 }
-

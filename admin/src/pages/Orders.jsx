@@ -71,6 +71,18 @@ export default function Orders() {
                     <option value="paid">Paid</option>
                     <option value="refunded">Refunded</option>
                   </select>
+                  <button 
+                    className="btn btn-sm btn-danger" 
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to delete this order?')) {
+                        axios.delete(`${API}/orders/${o._id}`).then(() => fetchOrders());
+                      }
+                    }}
+                    style={{ marginLeft: 6, padding: '4px 8px', fontSize: '0.75rem' }}
+                    title="Delete Order"
+                  >
+                    ✕
+                  </button>
                 </td>
               </tr>
             ))}
