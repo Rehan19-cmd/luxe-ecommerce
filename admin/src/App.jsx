@@ -54,7 +54,7 @@ function Sidebar() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/admin">
       <div className="layout">
         <Sidebar />
         <main className="main">

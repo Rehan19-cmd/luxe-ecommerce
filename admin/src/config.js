@@ -1,3 +1,3 @@
-// Force the production URL for the deployed admin panel
-export const SERVER_URL = 'https://luxe-ecommerce.onrender.com';
-export const API = `${SERVER_URL}/api`;
+// Force the production URL for the deployed admin panel (now relative to avoid CORS)
+export const SERVER_URL = '';
+export const API = '/api';

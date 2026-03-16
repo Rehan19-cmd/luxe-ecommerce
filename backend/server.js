@@ -46,6 +46,22 @@ try {
   if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath);
   app.use('/uploads', express.static(uploadsPath));
 
+  // ── Serve Admin Panel Static Files ───────────────────────
+  const adminPath = path.join(__dirname, '..', 'admin', 'dist');
+  console.log('▶ Admin path:', adminPath, '| Exists:', fs.existsSync(adminPath));
+  
+  app.use('/admin', express.static(adminPath));
+
+  // ── Catch-all for Admin React Router ─────────────────────
+  app.get('/admin/*', (req, res) => {
+    const adminIndex = path.join(adminPath, 'index.html');
+    if (fs.existsSync(adminIndex)) {
+      res.sendFile(adminIndex);
+    } else {
+      res.status(404).send('Admin Panel Build not found. Please run npm run build in the admin directory.');
+    }
+  });
+
   // ── Serve Frontend Static Files ──────────────────────────
   const frontendPath = path.join(__dirname, '..', 'frontend');
   console.log('▶ Frontend path:', frontendPath, '| Exists:', fs.existsSync(frontendPath));
