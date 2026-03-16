@@ -18,16 +18,7 @@ try {
 
   // ── Middleware ────────────────────────────────────────────
   app.use(helmet({ contentSecurityPolicy: false }));
-  app.use(cors({
-    origin: [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://luxe-ecommerce.onrender.com',
-      'https://luxe-ecommerce-1.onrender.com',
-      'https://luxe-admin.onrender.com',
-    ],
-    credentials: true,
-  }));
+  app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   console.log('▶ Middleware configured');
