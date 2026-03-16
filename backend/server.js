@@ -19,7 +19,8 @@ try {
   // ── Middleware ────────────────────────────────────────────
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cors({
-    origin: '*',
+    origin: true,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
@@ -29,6 +30,11 @@ try {
 
   // ── API Routes (MUST come BEFORE static files) ──────────
   app.use('/api', apiRoutes);
+
+  // ── API 404 Catch (Prevents API routes from returning HTML)
+  app.use('/api', (req, res) => {
+    res.status(404).json({ error: `API route not found: ${req.url}` });
+  });
 
   // ── Health Check ─────────────────────────────────────────
   app.get('/api-status', (req, res) => {
