@@ -53,42 +53,11 @@ function Sidebar() {
 }
 
 export default function App() {
-  const [token, setToken] = useState(localStorage.getItem('adminToken'));
-
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      localStorage.setItem('adminToken', token);
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-      localStorage.removeItem('adminToken');
-    }
-
-    const interceptor = axios.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response && error.response.status === 401) {
-          setToken(null);
-        }
-        return Promise.reject(error);
-      }
-    );
-
-    return () => axios.interceptors.response.eject(interceptor);
-  }, [token]);
-
-  if (!token) {
-    return <Login onLogin={setToken} />;
-  }
-
   return (
     <BrowserRouter>
       <div className="layout">
         <Sidebar />
         <main className="main">
-          <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem' }}>
-            <button className="btn btn-sm" onClick={() => setToken(null)}>Logout</button>
-          </div>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />

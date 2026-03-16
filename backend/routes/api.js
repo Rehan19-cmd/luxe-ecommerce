@@ -8,8 +8,8 @@ const adminCtrl = require('../controllers/adminController');
 const { protectAdmin } = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Khanfamily2945';
-const JWT_SECRET = process.env.JWT_SECRET || 'luxury_super_secret_key_2025';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // ── Admin Login ──────────────────────────────────────────
 router.post('/login', (req, res) => {
@@ -55,30 +55,30 @@ const optionalUpload = (req, res, next) => {
 router.get('/products', productCtrl.getProducts);
 router.get('/products/slug/:slug', productCtrl.getProductBySlug);
 router.get('/products/:id', productCtrl.getProductById);
-router.post('/products', protectAdmin, optionalUpload, productCtrl.createProduct);
-router.put('/products/:id', protectAdmin, optionalUpload, productCtrl.updateProduct);
-router.delete('/products/:id', protectAdmin, productCtrl.deleteProduct);
+router.post('/products', optionalUpload, productCtrl.createProduct);
+router.put('/products/:id', optionalUpload, productCtrl.updateProduct);
+router.delete('/products/:id', productCtrl.deleteProduct);
 
 // ── Category Routes ──────────────────────────────────────
 router.get('/categories', productCtrl.getCategories);
-router.post('/categories', protectAdmin, productCtrl.createCategory);
+router.post('/categories', productCtrl.createCategory);
 
 // ── Seller Routes ────────────────────────────────────────
-router.get('/sellers', protectAdmin, adminCtrl.getSellers);
-router.get('/sellers/:id', protectAdmin, adminCtrl.getSellerById);
-router.post('/sellers', protectAdmin, adminCtrl.createSeller);
-router.put('/sellers/:id', protectAdmin, adminCtrl.updateSeller);
-router.delete('/sellers/:id', protectAdmin, adminCtrl.deleteSeller);
+router.get('/sellers', adminCtrl.getSellers);
+router.get('/sellers/:id', adminCtrl.getSellerById);
+router.post('/sellers', adminCtrl.createSeller);
+router.put('/sellers/:id', adminCtrl.updateSeller);
+router.delete('/sellers/:id', adminCtrl.deleteSeller);
 
 // ── Order Routes ─────────────────────────────────────────
-router.get('/orders', protectAdmin, adminCtrl.getOrders);
-router.get('/orders/:id', protectAdmin, adminCtrl.getOrderById); // Admin gets specific order details
+router.get('/orders', adminCtrl.getOrders);
+router.get('/orders/:id', adminCtrl.getOrderById); // Admin gets specific order details
 router.post('/orders', adminCtrl.createOrder); // Public order creation check/COD
-router.put('/orders/:id', protectAdmin, adminCtrl.updateOrderStatus);
-router.delete('/orders/:id', protectAdmin, adminCtrl.deleteOrder);
+router.put('/orders/:id', adminCtrl.updateOrderStatus);
+router.delete('/orders/:id', adminCtrl.deleteOrder);
 router.post('/checkout', adminCtrl.createStripeCheckout);
 
 // ── Dashboard ────────────────────────────────────────────
-router.get('/dashboard', protectAdmin, adminCtrl.getDashboard);
+router.get('/dashboard', adminCtrl.getDashboard);
 
 module.exports = router;
