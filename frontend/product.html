@@ -20,12 +20,17 @@
     <a href="index.html" class="nav__logo"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span></a>
     <ul class="nav__links">
       <li><a href="index.html" class="nav__link">Home</a></li>
-      <li><a href="collection.html" class="nav__link">Collections</a></li>
-      <li><a href="index.html#featured" class="nav__link">Featured</a></li>
-      <li><a href="collection.html?category=clothing" class="nav__link">Clothing</a></li>
-      <li><a href="index.html#contact" class="nav__link">Contact</a></li>
+      <li><a href="jewelry.html" class="nav__link">Jewelry</a></li>
+      <li><a href="clothing.html" class="nav__link">Clothing</a></li>
+      <li><a href="about.html" class="nav__link">About</a></li>
+      <li><a href="contact.html" class="nav__link">Contact</a></li>
     </ul>
     <div class="nav__actions">
+      <a href="login.html" class="nav__login-link" style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">Login</a>
+      <div class="nav__user-menu" style="display:none;align-items:center;gap:8px;">
+        <span class="nav__user-name" style="font-size:0.8rem;color:var(--gold);"></span>
+        <button class="nav__logout-btn" style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">Logout</button>
+      </div>
       <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         <span class="nav__cart-count" id="cartCount">0</span>
@@ -37,8 +42,11 @@
   <div class="mobile-menu" id="mobileMenu">
     <ul class="mobile-menu__links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="collection.html">Collections</a></li>
-      <li><a href="collection.html?category=clothing">Clothing</a></li>
+      <li><a href="jewelry.html">Jewelry</a></li>
+      <li><a href="clothing.html">Clothing</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li class="mobile-login-link"><a href="login.html" style="color:var(--gold);">Login / Sign Up</a></li>
     </ul>
   </div>
 
@@ -50,13 +58,9 @@
       <div class="product-detail__grid">
         <div class="product-detail__gallery">
           <div class="product-detail__main-image-wrapper">
-            <div class="product-detail__slides" id="pdSlides">
-              <!-- Slides will be injected here -->
-            </div>
+            <div class="product-detail__slides" id="pdSlides"></div>
           </div>
-          <div class="product-detail__thumbnails" id="pdThumbs">
-            <!-- Thumbnails will be injected here -->
-          </div>
+          <div class="product-detail__thumbnails" id="pdThumbs"></div>
         </div>
         <div class="product-detail__info">
           <div class="product-detail__category" id="pdCategory"></div>
@@ -84,6 +88,46 @@
     </div>
   </section>
 
+  <!-- ═══════════ REVIEWS ═══════════ -->
+  <section style="padding:60px 0;background:var(--black-light);">
+    <div class="container" style="max-width:900px;">
+      <div class="section-header" style="text-align:left;margin-bottom:30px;">
+        <span class="section-tag">What Customers Say</span>
+        <h2 class="section-title" style="font-size:2rem;">Reviews</h2>
+      </div>
+
+      <!-- Review Form (logged-in users) -->
+      <div id="reviewFormSection" style="display:none;margin-bottom:40px;">
+        <div style="background:var(--black-card);border:1px solid rgba(201,168,76,0.15);padding:30px;">
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;">Write a Review</h3>
+          <div id="reviewError" style="display:none;padding:10px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;font-size:0.85rem;margin-bottom:12px;border-radius:4px;"></div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.8rem;color:var(--gray);display:block;margin-bottom:8px;">Your Rating</label>
+            <div id="starSelector" style="display:flex;gap:6px;font-size:1.8rem;cursor:pointer;">
+              <span data-star="1" style="color:var(--gray-dark);transition:color 0.2s;">★</span>
+              <span data-star="2" style="color:var(--gray-dark);transition:color 0.2s;">★</span>
+              <span data-star="3" style="color:var(--gray-dark);transition:color 0.2s;">★</span>
+              <span data-star="4" style="color:var(--gray-dark);transition:color 0.2s;">★</span>
+              <span data-star="5" style="color:var(--gray-dark);transition:color 0.2s;">★</span>
+            </div>
+          </div>
+          <input type="text" id="reviewTitle" placeholder="Review Title (optional)" style="width:100%;padding:12px 16px;background:var(--black);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);margin-bottom:12px;" />
+          <textarea id="reviewText" placeholder="Your review..." style="width:100%;padding:12px 16px;background:var(--black);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);min-height:80px;resize:vertical;margin-bottom:16px;"></textarea>
+          <button class="btn btn--primary" id="submitReviewBtn">Submit Review</button>
+        </div>
+      </div>
+
+      <!-- Login prompt for non-logged-in users -->
+      <div id="reviewLoginPrompt" style="display:none;margin-bottom:40px;text-align:center;padding:30px;background:var(--black-card);border:1px solid rgba(201,168,76,0.1);">
+        <p style="color:var(--gray-light);margin-bottom:12px;">Sign in to leave a review</p>
+        <a href="login.html" class="btn btn--ghost" id="reviewLoginBtn">Sign In</a>
+      </div>
+
+      <!-- Reviews List -->
+      <div id="reviewsList"></div>
+    </div>
+  </section>
+
   <!-- Related Products -->
   <section class="featured" style="padding:80px 0 120px;">
     <div class="container">
@@ -99,9 +143,8 @@
     <div class="container">
       <div class="footer__grid">
         <div class="footer__brand"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span><p class="footer__tagline">Where elegance meets eternity.</p></div>
-        <div class="footer__col"><h4>Shop</h4><a href="collection.html?category=jewelry">Jewelry</a><a href="collection.html?category=clothing">Clothing</a></div>
-        <div class="footer__col"><h4>Company</h4><a href="index.html#about">Our Story</a><a href="index.html#contact">Contact</a></div>
-
+        <div class="footer__col"><h4>Shop</h4><a href="jewelry.html">Jewelry</a><a href="clothing.html">Clothing</a><a href="new-arrivals.html">New Arrivals</a></div>
+        <div class="footer__col"><h4>Company</h4><a href="about.html">About Us</a><a href="contact.html">Contact</a></div>
       </div>
       <div class="footer__bottom"><p>&copy; 2025 LUXE. All rights reserved.</p></div>
     </div>
@@ -118,6 +161,7 @@
   <div class="cart-overlay" id="cartOverlay"></div>
 
   <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     (function() {
       const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
@@ -155,7 +199,7 @@
       function getFullImgPath(p) {
         if (!p) return '/images/placeholder.jpg';
         if (p.startsWith('http')) return p;
-        return p; // api.js already handles potential prefixing if needed, but here we expect /uploads/...
+        return p;
       }
 
       async function loadProduct() {
@@ -165,12 +209,12 @@
 
         document.title = `${product.name} — LUXE`;
         document.getElementById('breadcrumbName').textContent = product.name;
-        
-        // Slideshow Implementation
+
+        // Slideshow
         const slideContainer = document.getElementById('pdSlides');
         const thumbContainer = document.getElementById('pdThumbs');
         const images = product.images && product.images.length ? product.images : ['/images/placeholder.jpg'];
-        
+
         slideContainer.innerHTML = images.map((img, i) => `
           <div class="product-detail__slide ${i === 0 ? 'active' : ''}" data-index="${i}">
             <img src="${getFullImgPath(img)}" alt="${product.name}" />
@@ -183,32 +227,19 @@
               <img src="${getFullImgPath(img)}" alt="" />
             </div>
           `).join('');
-
           document.querySelectorAll('.product-detail__thumb').forEach(thumb => {
-            thumb.addEventListener('click', function() {
-              const idx = parseInt(this.dataset.index);
-              if (idx === activeSlideIndex) return;
-              changeSlide(idx);
-            });
+            thumb.addEventListener('click', function() { changeSlide(parseInt(this.dataset.index)); });
           });
         }
 
         function changeSlide(idx) {
           const slides = document.querySelectorAll('.product-detail__slide');
           const thumbs = document.querySelectorAll('.product-detail__thumb');
-          
-          // GSAP Crossfade
           gsap.to(slides[activeSlideIndex], { opacity: 0, duration: 0.5 });
           gsap.to(slides[idx], { opacity: 1, duration: 0.5 });
-          
           slides[activeSlideIndex].classList.remove('active');
           slides[idx].classList.add('active');
-          
-          if (thumbs.length) {
-            thumbs[activeSlideIndex].classList.remove('active');
-            thumbs[idx].classList.add('active');
-          }
-          
+          if (thumbs.length) { thumbs[activeSlideIndex].classList.remove('active'); thumbs[idx].classList.add('active'); }
           activeSlideIndex = idx;
         }
 
@@ -232,15 +263,125 @@
         ].filter(Boolean);
         meta.innerHTML = rows.map(r => `<div class="product-detail__meta-row"><span class="product-detail__meta-label">${r.label}</span><span class="product-detail__meta-value">${r.value}</span></div>`).join('');
 
-        // Entrance animation
         gsap.from('.product-detail__gallery', { opacity: 0, x: -40, duration: 0.8, ease: 'power3.out', delay: 0.2 });
         gsap.from('.product-detail__info', { opacity: 0, x: 40, duration: 0.8, ease: 'power3.out', delay: 0.3 });
 
-        // Load related products
+        // Related products
         const related = await api.getProducts({ category: product.category, limit: 4 });
         const relatedGrid = document.getElementById('relatedGrid');
         if (related?.products) {
           related.products.filter(p => p._id !== product._id).slice(0, 4).forEach(p => relatedGrid.appendChild(createProductCard(p)));
+        }
+
+        // Load reviews
+        loadReviews();
+        initReviewForm();
+      }
+
+      // ── Reviews ──
+      let selectedRating = 0;
+
+      function initReviewForm() {
+        if (!product) return;
+
+        // Set login redirect
+        const loginBtn = document.getElementById('reviewLoginBtn');
+        if (loginBtn) loginBtn.href = `login.html?redirect=product.html?slug=${slug}`;
+
+        if (luxeAuth.isLoggedIn()) {
+          document.getElementById('reviewFormSection').style.display = 'block';
+          document.getElementById('reviewLoginPrompt').style.display = 'none';
+        } else {
+          document.getElementById('reviewFormSection').style.display = 'none';
+          document.getElementById('reviewLoginPrompt').style.display = 'block';
+        }
+
+        // Star selector
+        const starEls = document.querySelectorAll('#starSelector span');
+        starEls.forEach(star => {
+          star.addEventListener('click', () => {
+            selectedRating = parseInt(star.dataset.star);
+            starEls.forEach(s => {
+              s.style.color = parseInt(s.dataset.star) <= selectedRating ? 'var(--gold)' : 'var(--gray-dark)';
+            });
+          });
+          star.addEventListener('mouseenter', () => {
+            const val = parseInt(star.dataset.star);
+            starEls.forEach(s => {
+              s.style.color = parseInt(s.dataset.star) <= val ? 'var(--gold-light)' : 'var(--gray-dark)';
+            });
+          });
+          star.addEventListener('mouseleave', () => {
+            starEls.forEach(s => {
+              s.style.color = parseInt(s.dataset.star) <= selectedRating ? 'var(--gold)' : 'var(--gray-dark)';
+            });
+          });
+        });
+
+        // Submit review
+        document.getElementById('submitReviewBtn')?.addEventListener('click', async () => {
+          const errEl = document.getElementById('reviewError');
+          errEl.style.display = 'none';
+
+          if (!selectedRating) {
+            errEl.textContent = 'Please select a rating.';
+            errEl.style.display = 'block';
+            return;
+          }
+
+          const btn = document.getElementById('submitReviewBtn');
+          btn.textContent = 'Submitting...';
+          btn.style.opacity = '0.7';
+
+          const res = await luxeAuth.authPost('/reviews', {
+            productId: product._id,
+            rating: selectedRating,
+            title: document.getElementById('reviewTitle').value,
+            text: document.getElementById('reviewText').value,
+          });
+
+          if (res?.error) {
+            errEl.textContent = res.error;
+            errEl.style.display = 'block';
+          } else {
+            document.getElementById('reviewTitle').value = '';
+            document.getElementById('reviewText').value = '';
+            selectedRating = 0;
+            document.querySelectorAll('#starSelector span').forEach(s => s.style.color = 'var(--gray-dark)');
+            loadReviews();
+            // Hide form after successful review
+            document.getElementById('reviewFormSection').style.display = 'none';
+          }
+
+          btn.textContent = 'Submit Review';
+          btn.style.opacity = '1';
+        });
+      }
+
+      async function loadReviews() {
+        if (!product) return;
+        const list = document.getElementById('reviewsList');
+        try {
+          const reviews = await api.get(`/reviews/${product._id}`);
+          if (reviews?.length) {
+            list.innerHTML = reviews.map(r => `
+              <div style="background:var(--black-card);border:1px solid rgba(201,168,76,0.08);padding:24px;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div>
+                    <strong style="color:var(--white);font-size:0.95rem;">${r.user?.name || 'Anonymous'}</strong>
+                    <span style="color:var(--gold);margin-left:10px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                  </div>
+                  <span style="color:var(--gray);font-size:0.75rem;">${new Date(r.createdAt).toLocaleDateString()}</span>
+                </div>
+                ${r.title ? `<h4 style="font-family:var(--font-display);font-size:1.1rem;color:var(--white);margin-bottom:6px;">${r.title}</h4>` : ''}
+                ${r.text ? `<p style="color:var(--gray-light);font-size:0.9rem;line-height:1.6;">${r.text}</p>` : ''}
+              </div>
+            `).join('');
+          } else {
+            list.innerHTML = '<p style="text-align:center;color:var(--gray);padding:30px;">No reviews yet. Be the first to review this product!</p>';
+          }
+        } catch (err) {
+          list.innerHTML = '<p style="text-align:center;color:var(--gray);padding:30px;">Unable to load reviews.</p>';
         }
       }
 
@@ -251,7 +392,6 @@
       document.getElementById('addToCartBtn')?.addEventListener('click', () => {
         if (!product) return;
         cart.addItem({ id: product._id, name: product.name, price: product.price, image: product.images?.[0] || '', slug: product.slug }, qty);
-        // Open cart drawer on add
         document.getElementById('cartDrawer')?.classList.add('active');
         document.getElementById('cartOverlay')?.classList.add('active');
       });

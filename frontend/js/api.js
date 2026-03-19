@@ -10,7 +10,12 @@ const api = {
   async get(endpoint) {
     try {
       const res = await fetch(`${API_BASE}${endpoint}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        let errJson;
+        try { errJson = await res.json(); } catch(e) {}
+        if (errJson && errJson.error) return errJson;
+        throw new Error(`HTTP ${res.status}`);
+      }
       return await res.json();
     } catch (err) {
       console.warn(`API fetch failed (${endpoint}):`, err.message);
@@ -25,11 +30,16 @@ const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        let errJson;
+        try { errJson = await res.json(); } catch(e) {}
+        if (errJson && errJson.error) return errJson;
+        throw new Error(`HTTP ${res.status}`);
+      }
       return await res.json();
     } catch (err) {
       console.warn(`API post failed (${endpoint}):`, err.message);
-      return null;
+      return { error: 'Something went wrong.' };
     }
   },
 
@@ -162,6 +172,7 @@ function createProductCard(product) {
   const getFullImgPath = (p) => {
     if (!p) return '/images/placeholder.jpg';
     if (p.startsWith('http')) return p;
+    if (p.startsWith('photo-')) return `https://images.unsplash.com/${p}`;
     return p; // Browser resolves relative paths like /uploads/... correctly relative to the root
   };
 
@@ -184,7 +195,10 @@ function createProductCard(product) {
     <div class="product-card__image">
       ${imgHTML}
       ${badge ? `<span class="product-card__badge">${badge}</span>` : ''}
-      ${!isOutOfStock ? `<button class="product-card__quick" data-product-id="${safeId}" data-product-name="${safeName}" data-product-price="${product.price}" data-product-image="${safeImg}" data-product-slug="${safeSlug}">Add to Cart</button>` : ''}
+      ${!isOutOfStock 
+         ? `<button class="product-card__quick" data-product-id="${safeId}" data-product-name="${safeName}" data-product-price="${product.price}" data-product-image="${safeImg}" data-product-slug="${safeSlug}">Add to Cart</button>` 
+         : `<div class="sold-out-classic-badge">SOLD OUT</div>`
+      }
     </div>
     <div class="product-card__info">
       <div class="product-card__category">${product.category}</div>

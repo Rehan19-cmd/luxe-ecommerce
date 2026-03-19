@@ -5,7 +5,10 @@ const router = express.Router();
 
 const productCtrl = require('../controllers/productController');
 const adminCtrl = require('../controllers/adminController');
-const { protectAdmin } = require('../middleware/auth');
+const userCtrl = require('../controllers/userController');
+const subscriberCtrl = require('../controllers/subscriberController');
+const reviewCtrl = require('../controllers/reviewController');
+const { protectAdmin, protectUser } = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Khanfamily2945';
@@ -53,6 +56,7 @@ const optionalUpload = (req, res, next) => {
 
 // ── Product Routes ───────────────────────────────────────
 router.get('/products', productCtrl.getProducts);
+router.get('/products/homepage', productCtrl.getHomepageProducts);
 router.get('/products/slug/:slug', productCtrl.getProductBySlug);
 router.get('/products/:id', productCtrl.getProductById);
 router.post('/products', protectAdmin, optionalUpload, productCtrl.createProduct);
@@ -72,8 +76,8 @@ router.delete('/sellers/:id', protectAdmin, adminCtrl.deleteSeller);
 
 // ── Order Routes ─────────────────────────────────────────
 router.get('/orders', protectAdmin, adminCtrl.getOrders);
-router.get('/orders/:id', protectAdmin, adminCtrl.getOrderById); // Admin gets specific order details
-router.post('/orders', adminCtrl.createOrder); // Public order creation check/COD
+router.get('/orders/:id', protectAdmin, adminCtrl.getOrderById);
+router.post('/orders', adminCtrl.createOrder);
 router.put('/orders/:id', protectAdmin, adminCtrl.updateOrderStatus);
 router.delete('/orders/:id', protectAdmin, adminCtrl.deleteOrder);
 router.post('/checkout', adminCtrl.createStripeCheckout);
@@ -81,4 +85,23 @@ router.post('/checkout', adminCtrl.createStripeCheckout);
 // ── Dashboard ────────────────────────────────────────────
 router.get('/dashboard', protectAdmin, adminCtrl.getDashboard);
 
+// ── User Auth Routes ─────────────────────────────────────
+router.post('/auth/signup', userCtrl.signup);
+router.post('/auth/login', userCtrl.login);
+router.get('/auth/me', protectUser, userCtrl.getMe);
+
+// ── Subscriber Routes ────────────────────────────────────
+router.post('/subscribe', subscriberCtrl.subscribe);
+router.get('/subscribers', protectAdmin, subscriberCtrl.getSubscribers);
+router.delete('/subscribers/:id', protectAdmin, subscriberCtrl.deleteSubscriber);
+
+// ── Site Settings Routes ─────────────────────────────────
+router.get('/site-settings', subscriberCtrl.getSiteSettings);
+router.put('/site-settings', protectAdmin, subscriberCtrl.updateSiteSettings);
+
+// ── Review Routes ────────────────────────────────────────
+router.post('/reviews', protectUser, reviewCtrl.createReview);
+router.get('/reviews/:productId', reviewCtrl.getProductReviews);
+
 module.exports = router;
+

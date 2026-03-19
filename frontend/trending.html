@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trending — LUXE</title>
+  <meta name="description" content="See what's trending at LUXE — the most popular jewelry and traditional designs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+  <nav class="nav scrolled" id="nav">
+    <a href="index.html" class="nav__logo"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span></a>
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="jewelry.html" class="nav__link">Jewelry</a></li>
+      <li><a href="clothing.html" class="nav__link">Clothing</a></li>
+      <li><a href="about.html" class="nav__link">About</a></li>
+      <li><a href="contact.html" class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <a href="login.html" class="nav__login-link" style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">Login</a>
+      <div class="nav__user-menu" style="display:none;align-items:center;gap:8px;"><span class="nav__user-name" style="font-size:0.8rem;color:var(--gold);"></span><button class="nav__logout-btn" style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">Logout</button></div>
+      <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="nav__cart-count" id="cartCount">0</span></button>
+      <button class="nav__menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu"><ul class="mobile-menu__links"><li><a href="index.html">Home</a></li><li><a href="jewelry.html">Jewelry</a></li><li><a href="clothing.html">Clothing</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li class="mobile-login-link"><a href="login.html" style="color:var(--gold);">Login / Sign Up</a></li></ul></div>
+
+  <section style="padding:160px 0 120px;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag reveal-text">What's Hot</span>
+        <h1 class="section-title reveal-text">Trending Now</h1>
+      </div>
+      <div class="featured__grid" id="productsGrid"></div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container"><div class="footer__grid"><div class="footer__brand"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span><p class="footer__tagline">Where elegance meets eternity.</p></div><div class="footer__col"><h4>Shop</h4><a href="jewelry.html">Jewelry</a><a href="clothing.html">Clothing</a></div><div class="footer__col"><h4>Company</h4><a href="about.html">About Us</a><a href="contact.html">Contact</a></div></div><div class="footer__bottom"><p>&copy; 2025 LUXE. All rights reserved.</p></div></div></footer>
+
+  <div class="cart-drawer" id="cartDrawer"><div class="cart-drawer__header"><h3>Your Cart</h3><button class="cart-drawer__close" id="cartClose">&times;</button></div><div class="cart-drawer__items" id="cartItems"><p class="cart-drawer__empty">Your cart is empty</p></div><div class="cart-drawer__footer"><div class="cart-drawer__total"><span>Total</span><span id="cartTotal">$0</span></div><a href="cart.html" class="btn btn--primary btn--full">View Cart</a></div></div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/scroll-bg.js"></script>
+  <script src="js/animations.js"></script>
+  <script>
+    (function() {
+      const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf); lenis.on('scroll', ScrollTrigger.update);
+      const cursor = document.getElementById('cursor'), follower = document.getElementById('cursorFollower');
+      if (cursor && follower) { let cx=0,cy=0,fx=0,fy=0; document.addEventListener('mousemove', e => { cx=e.clientX; cy=e.clientY; }); (function u(){ fx+=(cx-fx)*0.15; fy+=(cy-fy)*0.15; cursor.style.left=cx+'px'; cursor.style.top=cy+'px'; follower.style.left=fx+'px'; follower.style.top=fy+'px'; requestAnimationFrame(u); })(); }
+      document.getElementById('menuToggle')?.addEventListener('click', () => { document.getElementById('menuToggle').classList.toggle('active'); document.getElementById('mobileMenu').classList.toggle('active'); });
+      document.getElementById('cartBtn')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.add('active'); document.getElementById('cartOverlay')?.classList.add('active'); });
+      document.getElementById('cartClose')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
+      document.getElementById('cartOverlay')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
+
+      async function load() {
+        const grid = document.getElementById('productsGrid');
+        try {
+          const data = await api.getProducts({ trending: 'true', limit: 50 });
+          grid.innerHTML = '';
+          if (data?.products?.length) { data.products.forEach(p => grid.appendChild(createProductCard(p))); }
+          else { grid.innerHTML = '<p style="text-align:center;color:var(--gray);grid-column:1/-1;padding:60px;">No trending products right now.</p>'; }
+        } catch (err) { grid.innerHTML = '<p style="text-align:center;color:var(--gray);grid-column:1/-1;">Failed to load products.</p>'; }
+      }
+      load(); cart.updateUI();
+    })();
+  </script>
+</body>
+</html>

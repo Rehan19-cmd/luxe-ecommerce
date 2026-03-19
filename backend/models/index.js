@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 // ── Product Schema ───────────────────────────────────────
 const productSchema = new mongoose.Schema(
@@ -9,9 +10,10 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true, min: 0 },
     comparePrice: { type: Number, default: 0 },
     category: { type: String, required: true, enum: ['jewelry', 'clothing'] },
-    subcategory: { type: String, default: '' },
+    subcategory: { type: String, default: '',
+      enum: ['', 'rings', 'necklaces', 'bracelets', 'earrings', 'hijabs', 'traditional-clothing'] },
     tags: [{ type: String }],
-    images: [{ type: String }],          // paths / URLs
+    images: [{ type: String }],
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
     stock: { type: Number, default: 0 },
     featured: { type: Boolean, default: false },
@@ -19,6 +21,8 @@ const productSchema = new mongoose.Schema(
     bestSeller: { type: Boolean, default: false },
     preferred: { type: Boolean, default: false },
     offer: { type: Boolean, default: false },
+    newArrival: { type: Boolean, default: false },
+    mostSold: { type: Boolean, default: false },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0 },
     material: { type: String, default: '' },
@@ -104,10 +108,66 @@ orderSchema.pre('save', function (next) {
   next();
 });
 
+// ── User Schema (Customer Accounts) ─────────────────────
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+// ── Subscriber Schema ────────────────────────────────────
+const subscriberSchema = new mongoose.Schema(
+  {
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    active: { type: Boolean, default: true },
+  },
+  { timestamps: true }
+);
+
+// ── Review Schema ────────────────────────────────────────
+const reviewSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    title: { type: String, default: '' },
+    text: { type: String, default: '' },
+  },
+  { timestamps: true }
+);
+
+// Prevent duplicate reviews from same user on same product
+reviewSchema.index({ user: 1, product: 1 }, { unique: true });
+
+// ── Site Settings Schema (singleton) ─────────────────────
+const siteSettingsSchema = new mongoose.Schema({
+  subscriptionDiscountEnabled: { type: Boolean, default: false },
+  discountPercent: { type: Number, default: 10 },
+  whatsappNumber: { type: String, default: '' },
+  whatsappAutoReply: { type: String, default: 'Thank you for contacting us. Our team will respond shortly.' },
+});
+
 // ── Exports ──────────────────────────────────────────────
 const Product = mongoose.model('Product', productSchema);
 const Category = mongoose.model('Category', categorySchema);
 const Seller = mongoose.model('Seller', sellerSchema);
 const Order = mongoose.model('Order', orderSchema);
+const User = mongoose.model('User', userSchema);
+const Subscriber = mongoose.model('Subscriber', subscriberSchema);
+const Review = mongoose.model('Review', reviewSchema);
+const SiteSettings = mongoose.model('SiteSettings', siteSettingsSchema);
 
-module.exports = { Product, Category, Seller, Order };
+module.exports = { Product, Category, Seller, Order, User, Subscriber, Review, SiteSettings };

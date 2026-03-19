@@ -20,3 +20,19 @@ exports.protectAdmin = (req, res, next) => {
     res.status(401).json({ error: 'Invalid or expired token. Please log in again.' });
   }
 };
+
+exports.protectUser = (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Please log in to continue.' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid or expired token. Please log in again.' });
+  }
+};
+

@@ -13,9 +13,10 @@ export default function Products() {
   
   const [form, setForm] = useState({ 
     name: '', description: '', price: '', comparePrice: '', 
-    discountPercent: '', category: 'jewelry', subcategory: '', 
+    discountPercent: '', category: 'jewelry', subcategory: 'rings', 
     tags: '', stock: '', material: '', weight: '', 
-    featured: false, trending: false, offer: false 
+    featured: false, trending: false, offer: false,
+    newArrival: true, mostSold: false 
   })
 
   const fetchProducts = () => axios.get(`${API}/products`).then(r => setProducts(r.data.products || [])).catch(err => console.error('Fetch error:', err))
@@ -36,10 +37,11 @@ export default function Products() {
     setForm({ 
       name: p.name, description: p.description || '', price: p.price, 
       comparePrice: p.comparePrice || '', discountPercent: discount, 
-      category: p.category, subcategory: p.subcategory || '', 
+      category: p.category, subcategory: p.subcategory || (p.category === 'jewelry' ? 'rings' : 'hijabs'), 
       tags: p.tags?.join(', ') || '', stock: p.stock, 
       material: p.material || '', weight: p.weight || '', 
-      featured: p.featured, trending: p.trending, offer: p.offer || false 
+      featured: p.featured, trending: p.trending, offer: p.offer || false,
+      newArrival: p.newArrival ?? false, mostSold: p.mostSold ?? false 
     })
     setSelectedFiles([])
     setExistingImages(p.images || [])
@@ -75,6 +77,8 @@ export default function Products() {
     formData.append('featured', form.featured)
     formData.append('trending', form.trending)
     formData.append('offer', form.offer)
+    formData.append('newArrival', form.newArrival)
+    formData.append('mostSold', form.mostSold)
     
     // Add tags
     const tagsArr = form.tags.split(',').map(t => t.trim()).filter(Boolean)
@@ -157,6 +161,8 @@ export default function Products() {
                   {p.featured && <span className="badge badge-warning" style={{ marginRight: 4 }}>Featured</span>}
                   {p.trending && <span className="badge badge-success" style={{ marginRight: 4 }}>Trending</span>}
                   {p.offer && <span className="badge badge-offer" style={{ marginRight: 4 }}>🏷️ Offer</span>}
+                  {p.newArrival && <span className="badge" style={{ background: '#3498db', color: '#fff', marginRight: 4 }}>New</span>}
+                  {p.mostSold && <span className="badge" style={{ background: '#9b59b6', color: '#fff', marginRight: 4 }}>Most Sold</span>}
                   {p.stock <= 0 && <span className="badge" style={{ background: '#ff4444', color: '#fff' }}>Sold Out</span>}
                 </td>
                 <td>
@@ -227,14 +233,28 @@ export default function Products() {
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Category</label>
-                    <select className="form-select" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                    <select className="form-select" value={form.category} onChange={e => setForm({...form, category: e.target.value, subcategory: e.target.value === 'jewelry' ? 'rings' : 'hijabs'})}>
                       <option value="jewelry">Jewelry</option>
                       <option value="clothing">Clothing</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Subcategory</label>
-                    <input className="form-input" value={form.subcategory} onChange={e => setForm({...form, subcategory: e.target.value})} placeholder="e.g. Necklaces, Rings" />
+                    <select className="form-select" value={form.subcategory} onChange={e => setForm({...form, subcategory: e.target.value})}>
+                      {form.category === 'jewelry' ? (
+                        <>
+                          <option value="rings">Rings</option>
+                          <option value="necklaces">Necklaces</option>
+                          <option value="bracelets">Bracelets</option>
+                          <option value="earrings">Earrings</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="hijabs">Hijabs</option>
+                          <option value="traditional-clothing">Traditional Clothing</option>
+                        </>
+                      )}
+                    </select>
                   </div>
                 </div>
                 <div className="form-group">
@@ -256,7 +276,7 @@ export default function Products() {
                   <input className="form-input" value={form.tags} onChange={e => setForm({...form, tags: e.target.value})} placeholder="diamond, gold, bridal" />
                 </div>
                 
-                <div className="form-row" style={{ gap: '24px' }}>
+                <div className="form-row" style={{ gap: '24px', flexWrap: 'wrap' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                     <input type="checkbox" checked={form.featured} onChange={e => setForm({...form, featured: e.target.checked})} /> ⭐ Featured
                   </label>
@@ -265,6 +285,12 @@ export default function Products() {
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: '#e74c3c' }}>
                     <input type="checkbox" checked={form.offer} onChange={e => setForm({...form, offer: e.target.checked})} /> 🏷️ Special Offer
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: '#3498db' }}>
+                    <input type="checkbox" checked={form.newArrival} onChange={e => setForm({...form, newArrival: e.target.checked})} /> ✨ New Arrival
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: '#9b59b6' }}>
+                    <input type="checkbox" checked={form.mostSold} onChange={e => setForm({...form, mostSold: e.target.checked})} /> 🛍️ Most Sold
                   </label>
                 </div>
               </div>

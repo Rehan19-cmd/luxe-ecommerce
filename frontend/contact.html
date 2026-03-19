@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — LUXE</title>
+  <meta name="description" content="Get in touch with LUXE via WhatsApp or email. We're here to help." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <nav class="nav scrolled" id="nav">
+    <a href="index.html" class="nav__logo"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span></a>
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="jewelry.html" class="nav__link">Jewelry</a></li>
+      <li><a href="clothing.html" class="nav__link">Clothing</a></li>
+      <li><a href="about.html" class="nav__link">About</a></li>
+      <li><a href="contact.html" class="nav__link active">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <a href="login.html" class="nav__login-link" style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);transition:color 0.3s;">Login</a>
+      <div class="nav__user-menu" style="display:none;align-items:center;gap:8px;">
+        <span class="nav__user-name" style="font-size:0.8rem;color:var(--gold);"></span>
+        <button class="nav__logout-btn" style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">Logout</button>
+      </div>
+      <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="nav__cart-count" id="cartCount">0</span>
+      </button>
+      <button class="nav__menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul class="mobile-menu__links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="jewelry.html">Jewelry</a></li>
+      <li><a href="clothing.html">Clothing</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li class="mobile-login-link"><a href="login.html" style="color:var(--gold);">Login / Sign Up</a></li>
+      <li class="mobile-user-link" style="display:none;"><a href="#" class="nav__logout-btn" style="color:var(--gold);">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Contact Section -->
+  <section style="padding:160px 0 120px;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag reveal-text">Get in Touch</span>
+        <h1 class="section-title reveal-text">Contact Us</h1>
+      </div>
+
+      <div style="max-width:800px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+        <!-- WhatsApp -->
+        <div class="reveal-up" style="background:var(--black-card);border:1px solid rgba(201,168,76,0.15);padding:40px;text-align:center;">
+          <div style="font-size:3rem;margin-bottom:16px;">💬</div>
+          <h3 style="font-family:var(--font-display);font-size:1.8rem;color:var(--white);margin-bottom:12px;">WhatsApp</h3>
+          <p style="color:var(--gray-light);font-size:0.95rem;line-height:1.7;margin-bottom:24px;">Chat with us directly on WhatsApp for quick responses about orders, sizing, or any questions.</p>
+          <a href="#" id="whatsappBtn" class="btn btn--primary" style="background:#25D366;color:#fff;" target="_blank" rel="noopener">
+            Chat on WhatsApp
+          </a>
+          <div id="whatsappAutoReply" style="display:none;margin-top:20px;padding:16px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);border-radius:8px;">
+            <p style="color:#25D366;font-size:0.85rem;font-style:italic;" id="autoReplyText"></p>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="reveal-up" style="background:var(--black-card);border:1px solid rgba(201,168,76,0.15);padding:40px;text-align:center;">
+          <div style="font-size:3rem;margin-bottom:16px;">✉️</div>
+          <h3 style="font-family:var(--font-display);font-size:1.8rem;color:var(--white);margin-bottom:12px;">Email Us</h3>
+          <p style="color:var(--gray-light);font-size:0.95rem;line-height:1.7;margin-bottom:24px;">Send us an email and we'll get back to you within 24 hours.</p>
+          <form id="contactForm" style="text-align:left;">
+            <input type="text" class="form-control" placeholder="Your Name" required style="margin-bottom:12px;width:100%;padding:12px 16px;background:var(--black);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);" />
+            <input type="email" class="form-control" placeholder="Your Email" required style="margin-bottom:12px;width:100%;padding:12px 16px;background:var(--black);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);" />
+            <textarea placeholder="Your Message" required style="margin-bottom:16px;width:100%;padding:12px 16px;background:var(--black);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);min-height:100px;resize:vertical;"></textarea>
+            <button type="submit" class="btn btn--primary btn--full">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span><p class="footer__tagline">Where elegance meets eternity.</p></div>
+        <div class="footer__col"><h4>Shop</h4><a href="jewelry.html">Jewelry</a><a href="clothing.html">Clothing</a><a href="new-arrivals.html">New Arrivals</a></div>
+        <div class="footer__col"><h4>Company</h4><a href="about.html">About Us</a><a href="contact.html">Contact</a></div>
+      </div>
+      <div class="footer__bottom"><p>&copy; 2025 LUXE. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header"><h3>Your Cart</h3><button class="cart-drawer__close" id="cartClose">&times;</button></div>
+    <div class="cart-drawer__items" id="cartItems"><p class="cart-drawer__empty">Your cart is empty</p></div>
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__total"><span>Total</span><span id="cartTotal">$0</span></div>
+      <a href="cart.html" class="btn btn--primary btn--full">View Cart</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/scroll-bg.js"></script>
+  <script src="js/animations.js"></script>
+  <script>
+    (function() {
+      const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      lenis.on('scroll', ScrollTrigger.update);
+
+      // Cursor
+      const cursor = document.getElementById('cursor'), follower = document.getElementById('cursorFollower');
+      if (cursor && follower) {
+        let cx=0,cy=0,fx=0,fy=0;
+        document.addEventListener('mousemove', e => { cx=e.clientX; cy=e.clientY; });
+        (function u(){ fx+=(cx-fx)*0.15; fy+=(cy-fy)*0.15; cursor.style.left=cx+'px'; cursor.style.top=cy+'px'; follower.style.left=fx+'px'; follower.style.top=fy+'px'; requestAnimationFrame(u); })();
+      }
+
+      // Mobile menu
+      const menuToggle = document.getElementById('menuToggle'), mobileMenu = document.getElementById('mobileMenu');
+      menuToggle?.addEventListener('click', () => { menuToggle.classList.toggle('active'); mobileMenu.classList.toggle('active'); });
+
+      // Cart drawer
+      document.getElementById('cartBtn')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.add('active'); document.getElementById('cartOverlay')?.classList.add('active'); });
+      document.getElementById('cartClose')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
+      document.getElementById('cartOverlay')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
+
+      // Load WhatsApp settings
+      async function loadSettings() {
+        const settings = await api.get('/site-settings');
+        if (settings) {
+          const phone = settings.whatsappNumber || '';
+          const autoReply = settings.whatsappAutoReply || 'Thank you for contacting us. Our team will respond shortly.';
+          const whatsappBtn = document.getElementById('whatsappBtn');
+          if (phone) {
+            whatsappBtn.href = `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello, I would like to inquire about your products.')}`;
+          }
+          whatsappBtn.addEventListener('click', () => {
+            const replyEl = document.getElementById('whatsappAutoReply');
+            const textEl = document.getElementById('autoReplyText');
+            textEl.textContent = autoReply;
+            replyEl.style.display = 'block';
+            gsap.from(replyEl, { opacity: 0, y: 10, duration: 0.4 });
+          });
+        }
+      }
+      loadSettings();
+
+      // Contact form
+      document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.textContent = 'Sent! ✓';
+        btn.style.background = 'var(--success)';
+        setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; }, 3000);
+        e.target.reset();
+      });
+
+      cart.updateUI();
+    })();
+  </script>
+</body>
+</html>

@@ -51,7 +51,6 @@
     metalness: 0.0,
     roughness: 0.0,
     transmission: 0.95,
-    thickness: 2.5,
     ior: 2.42,
     clearcoat: 1.0,
     clearcoatRoughness: 0.0,

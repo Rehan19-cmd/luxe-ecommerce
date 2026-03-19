@@ -1,77 +1,45 @@
 /* ══════════════════════════════════════════════════════════
-   App.js — Core application logic
+   App.js — Core Logic v11 (Native CSS 'left' property)
    ══════════════════════════════════════════════════════════ */
 
 (function initApp() {
   'use strict';
 
-  // ── Lenis Smooth Scrolling ──
-  const lenis = new Lenis({
-    duration: 1.6,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    orientation: 'vertical',
-    gestureOrientation: 'vertical',
-    smoothWheel: true,
-    wheelMultiplier: 0.8,
-    touchMultiplier: 1.5,
-  });
-
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
   }
-  requestAnimationFrame(raf);
 
-  // Sync GSAP ScrollTrigger with Lenis
+  // ── Lenis Smooth Scrolling ──────────────────────────────
+  const lenis = new Lenis({ duration: 1.6, smoothWheel: true, wheelMultiplier: 0.8 });
+  function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
   lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+  gsap.ticker.add(t => { lenis.raf(t * 1000); });
   gsap.ticker.lagSmoothing(0);
 
-  // ── Custom Cursor ──
+  // ── Custom Cursor ───────────────────────────────────────
   const cursor = document.getElementById('cursor');
   const follower = document.getElementById('cursorFollower');
-
   if (cursor && follower) {
     let cx = 0, cy = 0, fx = 0, fy = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      cx = e.clientX;
-      cy = e.clientY;
-    });
-
-    function updateCursor() {
-      fx += (cx - fx) * 0.12;
-      fy += (cy - fy) * 0.12;
-      cursor.style.left = cx + 'px';
-      cursor.style.top = cy + 'px';
-      follower.style.left = fx + 'px';
-      follower.style.top = fy + 'px';
-      requestAnimationFrame(updateCursor);
-    }
-    updateCursor();
-
-    // Hover effects for interactive elements
-    document.querySelectorAll('a, button, .product-card, .category-card, input').forEach((el) => {
-      el.addEventListener('mouseenter', () => {
-        cursor.classList.add('hovering');
-        follower.classList.add('hovering');
-      });
-      el.addEventListener('mouseleave', () => {
-        cursor.classList.remove('hovering');
-        follower.classList.remove('hovering');
-      });
+    document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
+    (function tick() {
+      fx += (cx - fx) * 0.12; fy += (cy - fy) * 0.12;
+      cursor.style.cssText = `left:${cx}px;top:${cy}px`;
+      follower.style.cssText = `left:${fx}px;top:${fy}px`;
+      requestAnimationFrame(tick);
+    })();
+    document.querySelectorAll('a, button, .product-card, input').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); follower.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); follower.classList.remove('hovering'); });
     });
   }
 
-  // ── Navbar Scroll Effect ──
+  // ── Navbar ─────────────────────────────────────────────
   const nav = document.getElementById('nav');
-  if (nav) {
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 60);
-    });
-  }
+  if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60), { passive: true });
 
-  // ── Mobile Menu Toggle ──
+  // ── Mobile Menu ────────────────────────────────────────
   const menuToggle = document.getElementById('menuToggle');
   const mobileMenu = document.getElementById('mobileMenu');
   if (menuToggle && mobileMenu) {
@@ -80,168 +48,237 @@
       mobileMenu.classList.toggle('active');
       document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
     });
-
-    mobileMenu.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        menuToggle.classList.remove('active');
-        mobileMenu.classList.remove('active');
-        document.body.style.overflow = '';
-      });
-    });
+    mobileMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', () => {
+      menuToggle.classList.remove('active'); mobileMenu.classList.remove('active'); document.body.style.overflow = '';
+    }));
   }
 
-  // ── Cart Drawer ──
-  const cartBtn = document.getElementById('cartBtn');
-  const cartDrawer = document.getElementById('cartDrawer');
-  const cartClose = document.getElementById('cartClose');
-  const cartOverlay = document.getElementById('cartOverlay');
-
-  function openCart() {
-    cartDrawer?.classList.add('active');
-    cartOverlay?.classList.add('active');
-  }
-
-  function closeCart() {
-    cartDrawer?.classList.remove('active');
-    cartOverlay?.classList.remove('active');
-  }
-
+  // ── Cart ───────────────────────────────────────────────
+  const cartBtn = document.getElementById('cartBtn'), cartDrawer = document.getElementById('cartDrawer'),
+        cartClose = document.getElementById('cartClose'), cartOverlay = document.getElementById('cartOverlay');
+  function openCart() { cartDrawer?.classList.add('active'); cartOverlay?.classList.add('active'); }
+  function closeCart() { cartDrawer?.classList.remove('active'); cartOverlay?.classList.remove('active'); }
   cartBtn?.addEventListener('click', openCart);
   cartClose?.addEventListener('click', closeCart);
   cartOverlay?.addEventListener('click', closeCart);
 
-  // ── Newsletter Form ──
-  const newsletterForm = document.getElementById('newsletterForm');
-  if (newsletterForm) {
-    newsletterForm.addEventListener('submit', (e) => {
+  // ── Newsletter ─────────────────────────────────────────
+  const nf = document.getElementById('newsletterForm');
+  if (nf) {
+    nf.addEventListener('submit', async e => {
       e.preventDefault();
-      const input = newsletterForm.querySelector('input');
-      if (input.value) {
-        input.value = '';
-        alert('Thank you for subscribing! 💎');
-      }
+      const inp = nf.querySelector('input'), msgEl = document.getElementById('subscribeMsg'), btn = nf.querySelector('button');
+      if (!inp.value) return;
+      btn.textContent = '...'; btn.style.opacity = '0.7';
+      try {
+        const res = await api.post('/subscribe', { email: inp.value });
+        if (msgEl) { msgEl.style.display = 'block'; msgEl.textContent = res?.error || res?.message || 'Thank you!'; msgEl.style.color = res?.error ? '#e74c3c' : 'var(--gold)'; if (!res?.error) inp.value = ''; }
+      } catch { }
+      btn.textContent = 'Subscribe'; btn.style.opacity = '1';
     });
   }
 
-  // ── Load Featured Products ──
-  async function loadFeatured() {
-    const grid = document.getElementById('featuredGrid');
-    if (!grid) return;
+  // ══════════════════════════════════════════════════════════
+  //  LUXURY 3-STEP ROTATING SHOWCASE (CSS 'left' Native)
+  //
+  //  Solves all GSAP matrix and width-measuring bugs natively 
+  //  by directly sliding the native CSS `left` calc() property. 
+  // ══════════════════════════════════════════════════════════
 
-    try {
-      const data = await api.getProducts({ featured: 'true', limit: 4 });
-      console.log('Featured data:', data);
-      if (data?.products?.length) {
-        grid.innerHTML = '';
-        data.products.forEach((p) => grid.appendChild(createProductCard(p)));
-      } else {
-        grid.innerHTML = '<p style="text-align:center;color:var(--gray);grid-column:1/-1;padding:40px;">No featured products yet. Mark products as Featured in the admin panel.</p>';
-      }
-    } catch (err) {
-      console.warn('loadFeatured error:', err);
-    }
+  const HOLD = 4500; // ms between animations
+  
+  function getResponsiveMetrics() {
+    const w = window.innerWidth;
+    if (w <= 500) return { visible: 1, gap: 16 };
+    if (w <= 850) return { visible: 2, gap: 20 };
+    if (w <= 1100) return { visible: 3, gap: 24 };
+    return { visible: 4, gap: 24 };
   }
 
-  // ── Load Trending Products ──
-  async function loadTrending() {
-    const slider = document.getElementById('trendingSlider');
-    if (!slider) return;
-
-    try {
-      const data = await api.getProducts({ trending: 'true', limit: 6 });
-      console.log('Trending data:', data);
-      if (data?.products?.length) {
-        slider.innerHTML = '';
-        data.products.forEach((p) => slider.appendChild(createProductCard(p)));
-      } else {
-        slider.innerHTML = '<p style="text-align:center;color:var(--gray);width:100%;padding:40px;">No trending products yet. Mark products as Trending in the admin panel.</p>';
-      }
-    } catch (err) {
-      console.warn('loadTrending error:', err);
-    }
+  function getSlotWidthStr(visible, gap) {
+    if (visible === 1) return `100%`;
+    const totalGap = gap * (visible - 1);
+    return `calc((100% - ${totalGap}px) / ${visible})`;
   }
 
-  // ── Load Special Offers ──
-  async function loadOffers() {
-    const grid = document.getElementById('offersGrid');
-    const staticOffers = document.getElementById('staticOffers');
-    if (!grid) return;
-
-    try {
-      const data = await api.getProducts({ offer: 'true', limit: 6 });
-      console.log('Offers data:', data);
-      if (data?.products?.length) {
-        // Hide static fallback cards, show dynamic ones
-        if (staticOffers) staticOffers.style.display = 'none';
-        grid.innerHTML = '';
-        data.products.forEach((p) => {
-          const discount = p.comparePrice && p.comparePrice > p.price
-            ? Math.round((1 - p.price / p.comparePrice) * 100) + '% OFF'
-            : 'SPECIAL';
-          const imgSrc = p.images?.[0] || '';
-          const isOutOfStock = p.stock !== undefined && p.stock <= 0;
-          const card = document.createElement('div');
-          card.className = 'offer-card reveal-up' + (isOutOfStock ? ' out-of-stock' : '');
-          card.innerHTML = `
-            <div class="offer-card__badge">${discount}</div>
-            ${isOutOfStock ? '<div class="offer-card__sold-out">SOLD OUT</div>' : ''}
-            ${imgSrc ? `<div class="offer-card__img"><img src="${imgSrc}" alt="${p.name}" /></div>` : `<div class="offer-card__icon">💎</div>`}
-            <h3 class="offer-card__title">${p.name}</h3>
-            <p class="offer-card__desc">${p.description || 'Limited time offer on this exclusive piece.'}</p>
-            <div class="offer-card__price">
-              <span class="offer-card__price-current">$${p.price.toLocaleString()}</span>
-              ${p.comparePrice && p.comparePrice > p.price ? `<span class="offer-card__price-compare">$${p.comparePrice.toLocaleString()}</span>` : ''}
-            </div>
-            <a href="product.html?slug=${p.slug}" class="btn btn--primary" ${isOutOfStock ? 'style="pointer-events:none;opacity:0.5"' : ''}>Shop Now</a>
-          `;
-          grid.appendChild(card);
-        });
-      } else {
-        // No dynamic offers — show static fallback cards
-        grid.innerHTML = '';
-        if (staticOffers) staticOffers.style.display = '';
-      }
-    } catch (err) {
-      console.warn('loadOffers error:', err);
-    }
+  function getSlotLeftStr(idx, visible, gap) {
+    const pct = (idx * 100) / visible;
+    const px = (idx * gap) / visible;
+    return `calc(${pct}% + ${px}px)`;
   }
 
-  // ── Scroll Indicator Animation ──
-  function initScrollIndicator() {
-    const indicator = document.querySelector('.hero__scroll-indicator');
-    if (indicator) {
-      gsap.to(indicator, {
-        y: 10,
-        opacity: 0.6,
-        duration: 1.2,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
+  function placeCard(el, idx, visible, gap) {
+    gsap.set(el, { left: getSlotLeftStr(idx, visible, gap) });
+  }
+
+  function tweenCard(tl, el, label, idx, visible, gap, duration, ease, extras = {}) {
+    tl.to(el, {
+      left: getSlotLeftStr(idx, visible, gap),
+      duration: duration,
+      ease: ease,
+      ...extras
+    }, label);
+  }
+
+  function buildShowcase(wrapper, products) {
+    if (!wrapper) return;
+
+    if (!products || !products.length) {
+      wrapper.innerHTML = '<div style="text-align:center;padding:80px 0;color:#5a5a5a;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;">◆<br><br>No products to display</div>';
+      return;
+    }
+
+    wrapper.style.cssText = 'position:relative;width:100%;overflow:hidden;min-height:500px;perspective:1600px;transform-style:preserve-3d;';
+    wrapper.innerHTML = '';
+
+    const track = document.createElement('div');
+    track.style.cssText = 'position:relative;width:100%;height:480px;';
+    wrapper.appendChild(track);
+
+    let m = getResponsiveMetrics();
+    const showCount = Math.min(m.visible, products.length);
+
+    let nextIdx = showCount % products.length;
+    let pool = [];
+
+    function makeWrap(prod, idx) {
+      const w = document.createElement('div');
+      w.className = 'showcase-slot-node';
+      w.style.cssText = `
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: ${getSlotWidthStr(m.visible, m.gap)};
+        will-change: left, opacity, transform;
+      `;
+      placeCard(w, idx, m.visible, m.gap);
+
+      const card = createProductCard(prod);
+      card.classList.remove('reveal-up');
+      card.style.cssText = 'width:100%;height:100%;opacity:1!important;visibility:visible!important;background:var(--black-card);transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;';
+      
+      w.appendChild(card);
+      track.appendChild(w);
+      return w;
+    }
+
+    for (let i = 0; i < showCount; i++) {
+      const el = makeWrap(products[i], i);
+      pool.push({ el, idx: i });
+    }
+
+    gsap.from(pool.map(p => p.el), {
+      y: 40, opacity: 0, scale: 0.95, duration: 0.9, stagger: 0.1, ease: 'power2.out', delay: 0.2
+    });
+
+    if (products.length <= m.visible) return; // Not enough products to rotate
+
+    let busy = false;
+    let timer = null;
+
+    function rotate() {
+      if (busy) return;
+      busy = true;
+
+      m = getResponsiveMetrics();
+
+      const leaving = pool[0];
+      const stayers = pool.slice(1);
+      const enterProd = products[nextIdx];
+
+      const enterEl = makeWrap(enterProd, m.visible);
+      gsap.set(enterEl, { opacity: 0, scale: 0.92, rotationY: 12 });
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          leaving.el.remove();
+          pool.shift();
+          pool.push({ el: enterEl, idx: nextIdx });
+          
+          pool.forEach((p, i) => {
+            p.el.style.width = getSlotWidthStr(m.visible, m.gap);
+            placeCard(p.el, i, m.visible, m.gap);
+            gsap.set(p.el, { rotationY: 0, scale: 1, opacity: 1 });
+          });
+          
+          nextIdx = (nextIdx + 1) % products.length;
+          busy = false;
+        }
+      });
+
+      // 1. Exit left
+      tweenCard(tl, leaving.el, null, -1, m.visible, m.gap, 0.9, 'power2.inOut', {
+        opacity: 0, rotationY: -15, scale: 0.92
+      });
+
+      tl.addLabel('shift', '+=0.05');
+
+      // 2. Shift remaining array
+      stayers.forEach((p, i) => {
+        tweenCard(tl, p.el, 'shift', i, m.visible, m.gap, 0.8, 'power2.inOut');
+      });
+
+      tl.addLabel('enter', '+=0.05');
+
+      // 3. New enters exactly into last slot
+      tweenCard(tl, enterEl, 'enter', m.visible - 1, m.visible, m.gap, 1.0, 'power2.out', {
+        opacity: 1, scale: 1, rotationY: 0
       });
     }
+
+    function startTimer() { timer = setInterval(rotate, HOLD); }
+    function stopTimer()  { clearInterval(timer); timer = null; }
+
+    startTimer();
+
+    wrapper.addEventListener('mouseenter', stopTimer);
+    wrapper.addEventListener('mouseleave', () => { if (!busy) startTimer(); });
+
+    wrapper.addEventListener('mousemove', e => {
+      if (busy) return;
+      const r = wrapper.getBoundingClientRect();
+      const my = ((e.clientY - r.top) / r.height - 0.5) * -7;
+      pool.forEach(({ el }) => gsap.to(el, { rotationX: my, duration: 0.5, ease: 'power2.out', overwrite: 'auto' }));
+    });
+    wrapper.addEventListener('mouseleave', () => {
+      pool.forEach(({ el }) => gsap.to(el, { rotationX: 0, duration: 0.6 }));
+    });
+
+    window.addEventListener('resize', () => {
+      m = getResponsiveMetrics();
+      pool.forEach((p, i) => {
+        p.el.style.width = getSlotWidthStr(m.visible, m.gap);
+        placeCard(p.el, i, m.visible, m.gap);
+      });
+    });
   }
 
-  // ── Initialize ──
-  cart.updateUI();
-  loadFeatured();
-  loadTrending();
-  loadOffers();
-  initScrollIndicator();
-
-  // ── Real-Time Auto-Refresh (every 10 seconds) ──
-  setInterval(() => {
-    loadFeatured();
-    loadTrending();
-    loadOffers();
-  }, 10000);
-
-  // Also refresh when page becomes visible (tab switch back)
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      loadFeatured();
-      loadTrending();
-      loadOffers();
+  // ── Load homepage sections ────────────────────────────
+  async function loadHomepageSections() {
+    try {
+      const data = await api.get('/products/homepage');
+      if (!data) return;
+      buildShowcase(document.querySelector('#specialOffers .showcase-wrapper'), data.specialOffers);
+      buildShowcase(document.querySelector('#newArrivals .showcase-wrapper'),   data.newArrivals);
+      buildShowcase(document.querySelector('#mostSold .showcase-wrapper'),      data.mostSold);
+    } catch (err) {
+      console.warn('Showcase error:', err);
     }
-  });
+  }
+
+  // ── Scroll reveal ─────────────────────────────────────
+  function initReveal() {
+    gsap.utils.toArray('.reveal-text').forEach(el => {
+      gsap.fromTo(el, { opacity: 0, y: 28 }, {
+        opacity: 1, y: 0, duration: 0.9, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 92%', once: true }
+      });
+    });
+  }
+
+  // ── Boot ──────────────────────────────────────────────
+  if (typeof cart !== 'undefined') cart.updateUI();
+  loadHomepageSections();
+  initReveal();
 
 })();
