@@ -136,9 +136,18 @@
     wrapper.appendChild(track);
 
     let m = getResponsiveMetrics();
-    const showCount = Math.min(m.visible, products.length);
+    
+    // Duplicate products if there aren't enough to rotate
+    let renderProducts = [...products];
+    // If we have items, but not enough to fill the visible slots + 1 (needed for smooth rotation)
+    if (renderProducts.length > 0) {
+      while (renderProducts.length <= m.visible + 1) {
+        renderProducts = renderProducts.concat(products);
+      }
+    }
 
-    let nextIdx = showCount % products.length;
+    const showCount = Math.min(m.visible, renderProducts.length);
+    let nextIdx = showCount % renderProducts.length;
     let pool = [];
 
     function makeWrap(prod, idx) {
@@ -163,7 +172,7 @@
     }
 
     for (let i = 0; i < showCount; i++) {
-      const el = makeWrap(products[i], i);
+      const el = makeWrap(renderProducts[i], i);
       pool.push({ el, idx: i });
     }
 
@@ -171,7 +180,7 @@
       y: 40, opacity: 0, scale: 0.95, duration: 0.9, stagger: 0.1, ease: 'power2.out', delay: 0.2
     });
 
-    if (products.length <= m.visible) return; // Not enough products to rotate
+    if (renderProducts.length <= m.visible) return; // Not enough products to rotate
 
     let busy = false;
     let timer = null;
@@ -184,7 +193,7 @@
 
       const leaving = pool[0];
       const stayers = pool.slice(1);
-      const enterProd = products[nextIdx];
+      const enterProd = renderProducts[nextIdx];
 
       const enterEl = makeWrap(enterProd, m.visible);
       gsap.set(enterEl, { opacity: 0, scale: 0.92, rotationY: 12 });
@@ -201,7 +210,7 @@
             gsap.set(p.el, { rotationY: 0, scale: 1, opacity: 1 });
           });
           
-          nextIdx = (nextIdx + 1) % products.length;
+          nextIdx = (nextIdx + 1) % renderProducts.length;
           busy = false;
         }
       });
