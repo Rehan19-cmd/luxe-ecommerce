@@ -281,4 +281,14 @@
   loadHomepageSections();
   initReveal();
 
+  if (typeof api !== 'undefined') {
+    api.get('/site-settings').then(settings => {
+      if (settings && settings.subscriptionDiscountEnabled) {
+        const desc = document.getElementById('newsletterDesc');
+        if (desc) {
+          desc.innerHTML = `Subscribe and get <strong style="color:var(--gold);">${settings.discountPercent}% off</strong> your first order. Be the first to discover new collections and exclusive offers.`;
+        }
+      }
+    }).catch(e => console.warn('Failed to load site settings:', e));
+  }
 })();
