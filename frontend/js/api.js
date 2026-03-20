@@ -70,6 +70,11 @@ const cart = {
   },
 
   addItem(product, qty = 1) {
+    if (typeof luxeAuth !== 'undefined' && !luxeAuth.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
     const items = this.getItems();
     const existing = items.find((i) => i.id === product.id);
     if (existing) {
@@ -125,7 +130,11 @@ const cart = {
     if (countEl) countEl.textContent = this.getCount();
 
     const totalEl = document.getElementById('cartTotal');
-    if (totalEl) totalEl.textContent = `$${this.getTotal().toLocaleString()}`;
+    if (totalEl) {
+      const itemsTotal = this.getTotal();
+      const shipping = itemsTotal > 0 && itemsTotal < 200 ? 15 : 0;
+      totalEl.textContent = `$${(itemsTotal + shipping).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    }
 
     this.renderDrawer();
   },

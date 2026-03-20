@@ -48,36 +48,36 @@
 
   <!-- Auth Section -->
   <section style="padding:160px 0 120px;min-height:80vh;display:flex;align-items:center;">
-    <div class="container" style="max-width:480px;">
+    <div class="container" style="max-width:560px;"> <!-- Increased container width -->
       <!-- Login Form -->
-      <div id="loginPanel">
+      <div id="loginPanel" style="padding:40px; border:1px solid rgba(201,168,76,0.2); background:var(--black); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
         <div class="section-header" style="margin-bottom:40px;">
-          <span class="section-tag">Welcome Back</span>
-          <h1 class="section-title" style="font-size:2.5rem;">Sign In</h1>
+          <span class="section-tag" style="font-size:0.9rem; letter-spacing:0.3em;">Welcome Back</span>
+          <h1 class="section-title" style="font-size:3.2rem; margin-top:10px;">Sign In</h1>
         </div>
         <form id="loginForm">
-          <div id="loginError" style="display:none;padding:12px 16px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);border-radius:4px;margin-bottom:20px;color:#e74c3c;font-size:0.85rem;"></div>
-          <input type="email" id="loginEmail" placeholder="Email Address" required style="width:100%;padding:14px 18px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:0.95rem;margin-bottom:16px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
-          <input type="password" id="loginPassword" placeholder="Password" required style="width:100%;padding:14px 18px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:0.95rem;margin-bottom:24px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
-          <button type="submit" class="btn btn--primary btn--full" id="loginBtn">Sign In</button>
+          <div id="loginError" style="display:none;padding:16px 20px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);margin-bottom:24px;color:#e74c3c;font-size:1rem;font-weight:500;"></div>
+          <input type="email" id="loginEmail" placeholder="Email Address" required style="width:100%;padding:18px 24px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:1.1rem;font-weight:400;letter-spacing:0.05em;margin-bottom:20px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
+          <input type="password" id="loginPassword" placeholder="Password" required style="width:100%;padding:18px 24px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:1.1rem;font-weight:400;letter-spacing:0.05em;margin-bottom:32px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
+          <button type="submit" class="btn btn--primary btn--full" id="loginBtn" style="padding:20px; font-size:1.1rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;">Sign In</button>
         </form>
-        <p style="text-align:center;margin-top:24px;color:var(--gray);">Don't have an account? <a href="#" id="showSignup" style="color:var(--gold);text-decoration:underline;">Create one</a></p>
+        <p style="text-align:center;margin-top:32px;color:var(--gray);font-size:1.1rem;">Don't have an account? <a href="#" id="showSignup" style="color:var(--gold);text-decoration:underline;padding-left:5px;font-weight:500;">Create one</a></p>
       </div>
 
       <!-- Signup Form -->
-      <div id="signupPanel" style="display:none;">
+      <div id="signupPanel" style="display:none; padding:40px; border:1px solid rgba(201,168,76,0.2); background:var(--black); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
         <div class="section-header" style="margin-bottom:40px;">
-          <span class="section-tag">Join LUXE</span>
-          <h1 class="section-title" style="font-size:2.5rem;">Create Account</h1>
+          <span class="section-tag" style="font-size:0.9rem; letter-spacing:0.3em;">Join LUXE</span>
+          <h1 class="section-title" style="font-size:3.2rem; margin-top:10px;">Create Account</h1>
         </div>
         <form id="signupForm">
-          <div id="signupError" style="display:none;padding:12px 16px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);border-radius:4px;margin-bottom:20px;color:#e74c3c;font-size:0.85rem;"></div>
-          <input type="text" id="signupName" placeholder="Full Name" required style="width:100%;padding:14px 18px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:0.95rem;margin-bottom:16px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
-          <input type="email" id="signupEmail" placeholder="Email Address" required style="width:100%;padding:14px 18px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:0.95rem;margin-bottom:16px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
-          <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required minlength="6" style="width:100%;padding:14px 18px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:0.95rem;margin-bottom:24px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
-          <button type="submit" class="btn btn--primary btn--full" id="signupBtn">Create Account</button>
+          <div id="signupError" style="display:none;padding:16px 20px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);margin-bottom:24px;color:#e74c3c;font-size:1rem;font-weight:500;"></div>
+          <input type="text" id="signupName" placeholder="Full Name" required style="width:100%;padding:18px 24px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:1.1rem;font-weight:400;letter-spacing:0.05em;margin-bottom:20px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
+          <input type="email" id="signupEmail" placeholder="Email Address" required style="width:100%;padding:18px 24px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:1.1rem;font-weight:400;letter-spacing:0.05em;margin-bottom:20px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
+          <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required minlength="6" style="width:100%;padding:18px 24px;background:var(--black-card);border:1px solid var(--gray-dark);color:var(--white);font-family:var(--font-body);font-size:1.1rem;font-weight:400;letter-spacing:0.05em;margin-bottom:32px;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gray-dark)'" />
+          <button type="submit" class="btn btn--primary btn--full" id="signupBtn" style="padding:20px; font-size:1.1rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;">Create Account</button>
         </form>
-        <p style="text-align:center;margin-top:24px;color:var(--gray);">Already have an account? <a href="#" id="showLogin" style="color:var(--gold);text-decoration:underline;">Sign in</a></p>
+        <p style="text-align:center;margin-top:32px;color:var(--gray);font-size:1.1rem;">Already have an account? <a href="#" id="showLogin" style="color:var(--gold);text-decoration:underline;padding-left:5px;font-weight:500;">Sign in</a></p>
       </div>
     </div>
   </section>
