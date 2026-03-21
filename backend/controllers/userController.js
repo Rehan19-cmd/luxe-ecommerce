@@ -64,3 +64,8 @@ exports.getMe = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// ── Logout (stateless — JWT invalidation handled client-side) ──
+exports.logout = (req, res) => {
+  res.json({ message: 'Logged out successfully.' });
+};

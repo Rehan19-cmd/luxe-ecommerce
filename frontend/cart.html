@@ -126,7 +126,7 @@
   <footer class="footer">
     <div class="container">
       <div class="footer__grid">
-        <div class="footer__brand"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span><p class="footer__tagline">Where elegance meets eternity.</p></div>
+        <div class="footer__brand"><span class="nav__logo-icon">◆</span><span class="nav__logo-text">LUXE</span><p class="footer__tagline">Crafted to shine. Designed to last.</p></div>
         <div class="footer__col"><h4>Shop</h4><a href="collection.html?category=jewelry">Jewelry</a><a href="collection.html?category=clothing">Clothing</a></div>
         <div class="footer__col"><h4>Company</h4><a href="index.html#about">Our Story</a><a href="index.html#contact">Contact</a></div>
 
@@ -136,7 +136,14 @@
   </footer>
 
   <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/scroll-bg.js"></script>
+  <script>
+    // ── Auth Gate: Redirect to login if not authenticated ──
+    if (typeof luxeAuth !== 'undefined' && !luxeAuth.isLoggedIn()) {
+      window.location.href = 'login.html?redirect=cart.html';
+    }
+  </script>
   <script>
     (function() {
       const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });

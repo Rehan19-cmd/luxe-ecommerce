@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════
-   API Helper — Fetch products, categories, etc.
+   API Helper — Fetch products, categories, orders, etc.
    ══════════════════════════════════════════════════════════ */
 
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
@@ -43,7 +43,7 @@ const api = {
     }
   },
 
-  // Product endpoints
+  // ── Product Endpoints ──────────────────────────────────
   getProducts(params = {}) {
     const qs = new URLSearchParams(params).toString();
     return this.get(`/products${qs ? '?' + qs : ''}`);
@@ -52,26 +52,37 @@ const api = {
   getProductById(id) { return this.get(`/products/${id}`); },
   getCategories() { return this.get('/categories'); },
 
-  // Orders
+  // ── Orders ─────────────────────────────────────────────
   createOrder(orderData) { return this.post('/orders', orderData); },
 };
 
-/* ═══════ Cart (localStorage) ═══════ */
+/* ══════════════════════════════════════════════════════════
+   Cart Module (localStorage-based)
+   Auth-gated: requires login to add/remove items
+   ══════════════════════════════════════════════════════════ */
 const cart = {
   KEY: 'luxe_cart',
 
+  // ── Get All Cart Items ────────────────────────────────
   getItems() {
     return JSON.parse(localStorage.getItem(this.KEY) || '[]');
   },
 
+  // ── Save Items & Refresh UI ───────────────────────────
   save(items) {
     localStorage.setItem(this.KEY, JSON.stringify(items));
     this.updateUI();
   },
 
+  // ── Add Item (Auth Required) ──────────────────────────
   addItem(product, qty = 1) {
+    // Auth gate: show toast message if not logged in
     if (typeof luxeAuth !== 'undefined' && !luxeAuth.isLoggedIn()) {
-      window.location.href = 'login.html';
+      if (typeof showLuxeToast === 'function') {
+        showLuxeToast('Please login to add items to your cart', 'warning', 3500);
+      } else {
+        alert('Please login to add items to your cart');
+      }
       return;
     }
     
@@ -91,18 +102,25 @@ const cart = {
     }
     this.save(items);
 
-    // Visual feedback
+    // Visual feedback on cart count badge
     const countEl = document.getElementById('cartCount');
     if (countEl) {
       countEl.style.transform = 'scale(1.4)';
       setTimeout(() => { countEl.style.transform = 'scale(1)'; }, 300);
     }
+
+    // Show success toast
+    if (typeof showLuxeToast === 'function') {
+      showLuxeToast(`${product.name} added to cart`, 'success', 2500);
+    }
   },
 
+  // ── Remove Item ───────────────────────────────────────
   removeItem(id) {
     this.save(this.getItems().filter((i) => i.id !== id));
   },
 
+  // ── Update Quantity ───────────────────────────────────
   updateQty(id, qty) {
     const items = this.getItems();
     const item = items.find((i) => i.id === id);
@@ -112,19 +130,23 @@ const cart = {
     }
   },
 
+  // ── Calculate Total ───────────────────────────────────
   getTotal() {
     return this.getItems().reduce((sum, i) => sum + i.price * i.qty, 0);
   },
 
+  // ── Get Item Count ────────────────────────────────────
   getCount() {
     return this.getItems().reduce((sum, i) => sum + i.qty, 0);
   },
 
+  // ── Clear Cart ────────────────────────────────────────
   clear() {
     localStorage.removeItem(this.KEY);
     this.updateUI();
   },
 
+  // ── Refresh Cart UI (count badge + drawer total) ──────
   updateUI() {
     const countEl = document.getElementById('cartCount');
     if (countEl) countEl.textContent = this.getCount();
@@ -139,6 +161,7 @@ const cart = {
     this.renderDrawer();
   },
 
+  // ── Render Cart Drawer Contents ───────────────────────
   renderDrawer() {
     const container = document.getElementById('cartItems');
     if (!container) return;
@@ -170,7 +193,10 @@ const cart = {
   },
 };
 
-/* ═══════ Product Card HTML Generator ═══════ */
+/* ══════════════════════════════════════════════════════════
+   Product Card HTML Generator
+   Creates premium luxury product card elements
+   ══════════════════════════════════════════════════════════ */
 function createProductCard(product) {
   const stars = '★'.repeat(Math.round(product.rating || 0)) + '☆'.repeat(5 - Math.round(product.rating || 0));
   const badge = product.trending ? 'Trending' : product.featured ? 'Featured' : product.offer ? 'Offer' : '';
@@ -182,7 +208,7 @@ function createProductCard(product) {
     if (!p) return '/images/placeholder.jpg';
     if (p.startsWith('http')) return p;
     if (p.startsWith('photo-')) return `https://images.unsplash.com/${p}`;
-    return p; // Browser resolves relative paths like /uploads/... correctly relative to the root
+    return p;
   };
 
   const imgHTML = imgSrc 
@@ -191,7 +217,7 @@ function createProductCard(product) {
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
-  // Safely encode product data to avoid issues with special chars in names
+  // Safely encode product data
   const safeId = product._id;
   const safeName = (product.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
   const safeSlug = product.slug || '';
@@ -223,7 +249,7 @@ function createProductCard(product) {
       ${isOutOfStock ? '<div style="color:#ff4444;font-weight:600;font-size:0.8rem;letter-spacing:0.1em;margin-top:4px;">OUT OF STOCK</div>' : ''}
     </div>`;
 
-  // Attach event listener for the Add to Cart button
+  // Attach Add to Cart event listener
   if (!isOutOfStock) {
     const addBtn = card.querySelector('.product-card__quick');
     if (addBtn) {

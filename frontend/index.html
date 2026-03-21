@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LUXE — Premium Jewelry & Clothing</title>
-  <meta name="description" content="Discover exquisite handcrafted jewelry and traditional clothing from Cincinnati, Ohio. LUXE — where elegance meets eternity." />
+  <meta name="description" content="Discover exquisite handcrafted jewelry and traditional clothing from Cincinnati, Ohio. LUXE — crafted to shine, designed to last." />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,11 +51,22 @@
       <li><a href="contact.html" class="nav__link">Contact</a></li>
     </ul>
     <div class="nav__actions">
-      <a href="login.html" class="nav__login-link" style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);transition:color 0.3s;">Login</a>
-      <div class="nav__user-menu" style="display:none;align-items:center;gap:8px;">
-        <span class="nav__user-name" style="font-size:0.8rem;color:var(--gold);"></span>
-        <button class="nav__logout-btn" style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">Logout</button>
+      <!-- Luxury Login Button (visible when logged out) -->
+      <a href="login.html" class="nav__login-btn">Login</a>
+
+      <!-- Account Dropdown (visible when logged in) -->
+      <div class="nav__account-dropdown" style="display:none;">
+        <button class="nav__account-trigger">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg>
+          <span class="nav__account-name">Account</span>
+          <svg class="nav__dropdown-arrow" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l3 3 3-3"/></svg>
+        </button>
+        <div class="nav__account-menu">
+          <button class="nav__logout-action">Log Out</button>
+          <button class="nav__switch-account-action">Use a Different Account</button>
+        </div>
       </div>
+
       <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
@@ -77,7 +88,8 @@
       <li><a href="about.html">About</a></li>
       <li><a href="contact.html">Contact</a></li>
       <li class="mobile-login-link"><a href="login.html" style="color:var(--gold);">Login / Sign Up</a></li>
-      <li class="mobile-user-link" style="display:none;"><a href="#" class="nav__logout-btn" style="color:var(--gold);">Logout</a></li>
+      <li class="mobile-user-link" style="display:none;"><a href="#" class="nav__logout-btn nav__logout-action" style="color:var(--gold);">Log Out</a></li>
+      <li class="mobile-user-link" style="display:none;"><a href="#" class="nav__switch-account-action" style="color:var(--gray-light);">Use a Different Account</a></li>
     </ul>
   </div>
 
@@ -87,8 +99,8 @@
     <div class="hero__overlay"></div>
     <div class="hero__content">
       <h1 class="hero__title">
-        <span class="hero__title-line reveal-text">Where Elegance</span>
-        <span class="hero__title-line hero__title-line--italic reveal-text">Meets Eternity</span>
+        <span class="hero__title-line reveal-text">Crafted to Shine.</span>
+        <span class="hero__title-line hero__title-line--italic reveal-text">Designed to Last.</span>
       </h1>
       <p class="hero__desc reveal-text">Exquisite handcrafted jewelry and traditional fashion.</p>
       <div class="hero__cta reveal-text">
@@ -181,7 +193,7 @@
         <div class="footer__brand">
           <span class="nav__logo-icon">◆</span>
           <span class="nav__logo-text">LUXE</span>
-          <p class="footer__tagline">Where elegance meets eternity.</p>
+          <p class="footer__tagline">Crafted to shine. Designed to last.</p>
         </div>
         <div class="footer__col">
           <h4>Shop</h4>

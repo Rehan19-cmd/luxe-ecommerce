@@ -1308,3 +1308,233 @@ input { font-family: inherit; }
   .showcase-track > .showcase-card-slot { width: calc(85vw); max-width: 300px; }
 }
 
+/* ══════════════════════════════════════════════════════════
+   LUXURY LOGIN BUTTON — Gold gradient with glow
+   ══════════════════════════════════════════════════════════ */
+.nav__login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 28px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  background: linear-gradient(135deg, #d4af37, #f5d77a, #d4af37);
+  background-size: 200% 200%;
+  border-radius: 30px;
+  box-shadow: 0 0 15px rgba(212,175,55,0.4), 0 2px 8px rgba(0,0,0,0.3);
+  transition: all 0.35s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav__login-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  border-radius: 30px;
+}
+
+.nav__login-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(212,175,55,0.6), 0 0 50px rgba(212,175,55,0.2);
+  background-position: 100% 0;
+  color: #050505;
+}
+
+.nav__login-btn:hover::before {
+  transform: translateX(100%);
+}
+
+/* ══════════════════════════════════════════════════════════
+   ACCOUNT DROPDOWN — Logged-in user menu
+   ══════════════════════════════════════════════════════════ */
+.nav__account-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav__account-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 30px;
+  cursor: none;
+  transition: all 0.3s ease;
+}
+
+.nav__account-trigger:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(212,175,55,0.3);
+}
+
+.nav__account-trigger svg {
+  color: var(--gold);
+}
+
+.nav__dropdown-arrow {
+  transition: transform 0.3s ease;
+}
+
+.nav__account-dropdown.open .nav__dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.nav__account-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 220px;
+  background: rgba(18,18,18,0.97);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 8px;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.08);
+  z-index: 1001;
+}
+
+.nav__account-dropdown.open .nav__account-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav__account-menu button {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--gray-light);
+  background: none;
+  border: none;
+  cursor: none;
+  transition: all 0.25s ease;
+}
+
+.nav__account-menu button:hover {
+  color: var(--gold);
+  background: rgba(212,175,55,0.06);
+  padding-left: 24px;
+}
+
+.nav__account-menu button + button {
+  border-top: 1px solid rgba(212,175,55,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOAST NOTIFICATIONS — Luxury styled alerts
+   ══════════════════════════════════════════════════════════ */
+.luxe-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  background: rgba(18,18,18,0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.1);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--white);
+  z-index: 100001;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.luxe-toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.luxe-toast--warning {
+  border-color: rgba(231,76,60,0.4);
+}
+
+.luxe-toast--warning .luxe-toast__icon {
+  font-size: 1.1rem;
+}
+
+.luxe-toast--success {
+  border-color: rgba(39,174,96,0.4);
+}
+
+.luxe-toast--success .luxe-toast__icon {
+  color: #27ae60;
+  font-weight: 700;
+}
+
+.luxe-toast__icon {
+  color: var(--gold);
+  font-size: 1rem;
+}
+
+.luxe-toast__message {
+  color: var(--gray-light);
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ENHANCED PRODUCT CARD HOVER — Premium 3D effects
+   ══════════════════════════════════════════════════════════ */
+.showcase-wrapper .product-card:not(.out-of-stock):hover {
+  transform: translateY(-24px) translateZ(80px) rotateX(3deg) rotateY(-3deg) scale(1.1) !important;
+  box-shadow: 
+    -15px 35px 70px rgba(0,0,0,0.9),
+    0 0 40px rgba(212,175,55,0.6),
+    0 0 100px rgba(212,175,55,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
+  border-color: var(--gold) !important;
+}
+
+.product-card:not(.out-of-stock):hover .product-card__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(212,175,55,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .nav__login-btn {
+    padding: 8px 20px;
+    font-size: 0.75rem;
+  }
+  .luxe-toast {
+    font-size: 0.8rem;
+    padding: 12px 20px;
+    max-width: 90vw;
+    white-space: normal;
+  }
+}

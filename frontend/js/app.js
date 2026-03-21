@@ -243,14 +243,53 @@
     wrapper.addEventListener('mouseenter', stopTimer);
     wrapper.addEventListener('mouseleave', () => { if (!busy) startTimer(); });
 
+    // ── Enhanced Per-Card 3D Hover Interaction ──────────
+    // Each card individually tilts toward cursor with golden glow
     wrapper.addEventListener('mousemove', e => {
       if (busy) return;
-      const r = wrapper.getBoundingClientRect();
-      const my = ((e.clientY - r.top) / r.height - 0.5) * -7;
-      pool.forEach(({ el }) => gsap.to(el, { rotationX: my, duration: 0.5, ease: 'power2.out', overwrite: 'auto' }));
+      const wrapRect = wrapper.getBoundingClientRect();
+
+      pool.forEach(({ el }) => {
+        const cardRect = el.getBoundingClientRect();
+        const cx = e.clientX - cardRect.left;
+        const cy = e.clientY - cardRect.top;
+        const isOver = cx >= 0 && cx <= cardRect.width && cy >= 0 && cy <= cardRect.height;
+
+        if (isOver) {
+          // Calculate tilt based on cursor position within card
+          const rotY = ((cx / cardRect.width) - 0.5) * 8;   // -4 to +4 degrees
+          const rotX = ((cy / cardRect.height) - 0.5) * -6;  // -3 to +3 degrees
+
+          gsap.to(el, {
+            rotationX: rotX,
+            rotationY: rotY,
+            scale: 1.08,
+            z: 40,
+            duration: 0.4,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        } else {
+          // Subtle global tilt for non-hovered cards
+          const globalRotX = ((e.clientY - wrapRect.top) / wrapRect.height - 0.5) * -4;
+          gsap.to(el, {
+            rotationX: globalRotX,
+            rotationY: 0,
+            scale: 1,
+            z: 0,
+            duration: 0.5,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        }
+      });
     });
+
     wrapper.addEventListener('mouseleave', () => {
-      pool.forEach(({ el }) => gsap.to(el, { rotationX: 0, duration: 0.6 }));
+      pool.forEach(({ el }) => gsap.to(el, {
+        rotationX: 0, rotationY: 0, scale: 1, z: 0,
+        duration: 0.6, ease: 'power2.out'
+      }));
     });
 
     window.addEventListener('resize', () => {

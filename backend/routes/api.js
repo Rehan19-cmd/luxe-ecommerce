@@ -88,6 +88,7 @@ router.get('/dashboard', protectAdmin, adminCtrl.getDashboard);
 // ── User Auth Routes ─────────────────────────────────────
 router.post('/auth/signup', userCtrl.signup);
 router.post('/auth/login', userCtrl.login);
+router.post('/auth/logout', userCtrl.logout);
 router.get('/auth/me', protectUser, userCtrl.getMe);
 
 // ── Subscriber Routes ────────────────────────────────────
