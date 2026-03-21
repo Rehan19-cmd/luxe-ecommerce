@@ -28,10 +28,17 @@
       <li><a href="contact.html" class="nav__link">Contact</a></li>
     </ul>
     <div class="nav__actions">
-      <a href="login.html" class="nav__login-link" style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">Login</a>
-      <div class="nav__user-menu" style="display:none;align-items:center;gap:8px;">
-        <span class="nav__user-name" style="font-size:0.8rem;color:var(--gold);"></span>
-        <button class="nav__logout-btn" style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;">Logout</button>
+      <a href="login.html" class="nav__login-btn">Login</a>
+      <div class="nav__account-dropdown" style="display:none;">
+        <button class="nav__account-trigger">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg>
+          <span class="nav__account-name">Account</span>
+          <svg class="nav__dropdown-arrow" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l3 3 3-3"/></svg>
+        </button>
+        <div class="nav__account-menu">
+          <button class="nav__logout-action">Log Out</button>
+          <button class="nav__switch-account-action">Use a Different Account</button>
+        </div>
       </div>
       <button class="nav__cart" id="cartBtn" aria-label="Shopping Cart">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -130,22 +137,52 @@
 
       const emptyMsg = '<p style="text-align:center;color:var(--gray);grid-column:1/-1;padding:40px;">No products in this category yet.</p>';
 
-      async function loadSubcategory(subcategory, gridId) {
-        const grid = document.getElementById(gridId);
-        if (!grid) return;
+      // ── Load ALL clothing products, then distribute into subcategory grids ──
+      async function loadClothing() {
         try {
-          const data = await api.getProducts({ category: 'clothing', subcategory: subcategory, limit: 20 });
-          grid.innerHTML = '';
-          if (data?.products?.length) {
-            data.products.forEach(p => grid.appendChild(createProductCard(p)));
-          } else {
-            grid.innerHTML = emptyMsg;
+          const data = await api.getProducts({ category: 'clothing', limit: 100 });
+          const products = data?.products || [];
+
+          const subcategoryGrids = {
+            'hijabs': document.getElementById('hijabsGrid'),
+            'traditional-clothing': document.getElementById('traditionalGrid'),
+          };
+
+          Object.values(subcategoryGrids).forEach(g => { if (g) g.innerHTML = ''; });
+
+          if (!products.length) {
+            Object.values(subcategoryGrids).forEach(g => { if (g) g.innerHTML = emptyMsg; });
+            return;
           }
-        } catch (err) { grid.innerHTML = emptyMsg; }
+
+          const placed = { 'hijabs': 0, 'traditional-clothing': 0 };
+
+          products.forEach(p => {
+            const sub = (p.subcategory || '').toLowerCase();
+            const grid = subcategoryGrids[sub];
+            if (grid) {
+              grid.appendChild(createProductCard(p));
+              placed[sub]++;
+            } else {
+              // Fallback: put in hijabs grid if no subcategory match
+              const fallback = subcategoryGrids['hijabs'];
+              if (fallback) fallback.appendChild(createProductCard(p));
+            }
+          });
+
+          Object.entries(placed).forEach(([key, count]) => {
+            if (count === 0 && subcategoryGrids[key]) {
+              subcategoryGrids[key].innerHTML = emptyMsg;
+            }
+          });
+
+        } catch (err) {
+          console.warn('Failed to load clothing:', err);
+          document.querySelectorAll('.featured__grid').forEach(g => g.innerHTML = emptyMsg);
+        }
       }
 
-      loadSubcategory('hijabs', 'hijabsGrid');
-      loadSubcategory('traditional-clothing', 'traditionalGrid');
+      loadClothing();
       cart.updateUI();
     })();
   </script>
