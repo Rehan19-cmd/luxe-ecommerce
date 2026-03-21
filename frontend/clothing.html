@@ -66,17 +66,29 @@
     </div>
   </div>
 
-  <!-- All Clothing Products -->
-  <section class="collection-grid" style="padding:60px 0;">
+  <!-- Hijabs Section -->
+  <section class="category-section" style="padding:60px 0;">
     <div class="container">
       <div class="section-header" style="margin-bottom:30px;text-align:left;">
-        <span class="section-tag reveal-text">👗</span>
-        <h2 class="section-title reveal-text" style="font-size:2rem;">All Clothing</h2>
+        <span class="section-tag reveal-text">🧕</span>
+        <h2 class="section-title reveal-text" style="font-size:2rem;">Hijabs</h2>
       </div>
-      <div class="collection-grid__inner" id="allClothingGrid"></div>
+      <div class="collection-grid__inner" id="hijabsGrid"></div>
     </div>
   </section>
 
+  <!-- Traditional Clothing Section -->
+  <section class="category-section" style="padding:60px 0;background:var(--black-light);">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:30px;text-align:left;">
+        <span class="section-tag reveal-text">👗</span>
+        <h2 class="section-title reveal-text" style="font-size:2rem;">Traditional Clothing</h2>
+      </div>
+      <div class="collection-grid__inner" id="traditionalGrid"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer__grid">
@@ -123,20 +135,48 @@
       document.getElementById('cartClose')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
       document.getElementById('cartOverlay')?.addEventListener('click', () => { document.getElementById('cartDrawer')?.classList.remove('active'); document.getElementById('cartOverlay')?.classList.remove('active'); });
 
-      // Load all clothing products — same pattern as collection.html
-      const grid = document.getElementById('allClothingGrid');
-      async function loadProducts() {
+      const emptyMsg = '<p style="text-align:center;color:var(--gray);grid-column:1/-1;padding:40px;">No products in this category yet.</p>';
+
+      // Fetch ALL clothing in one call, then distribute into section grids
+      async function loadClothing() {
         const data = await api.getProducts({ category: 'clothing', limit: 50 });
-        grid.innerHTML = '';
-        if (data?.products?.length) {
-          data.products.forEach(pr => grid.appendChild(createProductCard(pr)));
-        } else {
-          grid.innerHTML = '<p style="text-align:center;color:var(--gray);grid-column:1/-1;padding:60px;">No clothing products found.</p>';
+        const products = data?.products || [];
+
+        const grids = {
+          'hijabs':              document.getElementById('hijabsGrid'),
+          'traditional-clothing': document.getElementById('traditionalGrid'),
+        };
+
+        Object.values(grids).forEach(g => { if (g) g.innerHTML = ''; });
+
+        if (!products.length) {
+          Object.values(grids).forEach(g => { if (g) g.innerHTML = emptyMsg; });
+          return;
         }
+
+        const counts = { 'hijabs': 0, 'traditional-clothing': 0 };
+
+        products.forEach(p => {
+          const sub = (p.subcategory || '').toLowerCase().trim();
+          const card = createProductCard(p);
+
+          if (grids[sub]) {
+            grids[sub].appendChild(card);
+            counts[sub]++;
+          } else {
+            // No subcategory or unrecognized — put in Hijabs as default
+            grids['hijabs'].appendChild(card);
+            counts['hijabs']++;
+          }
+        });
+
+        Object.entries(counts).forEach(([key, count]) => {
+          if (count === 0 && grids[key]) grids[key].innerHTML = emptyMsg;
+        });
       }
 
       cart.updateUI();
-      loadProducts();
+      loadClothing();
     })();
   </script>
 </body>
