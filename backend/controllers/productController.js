@@ -9,8 +9,8 @@ exports.getProducts = async (req, res) => {
     const { category, subcategory, tag, featured, trending, search, sort, limit = 50, page = 1 } = req.query;
     const filter = {};
 
-    if (category) filter.category = category;
-    if (subcategory) filter.subcategory = subcategory;
+    if (category) filter.category = { $regex: new RegExp(`^${category}$`, 'i') };
+    if (subcategory) filter.subcategory = { $regex: new RegExp(`^${subcategory}$`, 'i') };
     if (tag) filter.tags = { $in: [tag] };
     if (featured === 'true') filter.featured = true;
     if (trending === 'true') filter.trending = true;
