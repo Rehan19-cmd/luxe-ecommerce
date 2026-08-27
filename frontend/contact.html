@@ -145,13 +145,25 @@
       async function loadSettings() {
         const settings = await api.get('/site-settings');
         if (settings) {
-          const phone = settings.whatsappNumber || '';
+          const numbers = [settings.whatsappNumber, settings.whatsappNumber2, settings.whatsappNumber3]
+            .map(n => (n || '').replace(/[^0-9]/g, ''))
+            .filter(Boolean);
+          const message = 'Hello, I would like to inquire about your products.';
           const autoReply = settings.whatsappAutoReply || 'Thank you for contacting us. Our team will respond shortly.';
           const whatsappBtn = document.getElementById('whatsappBtn');
-          if (phone) {
-            whatsappBtn.href = `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello, I would like to inquire about your products.')}`;
+
+          if (numbers[0]) {
+            whatsappBtn.href = `https://wa.me/${numbers[0]}?text=${encodeURIComponent(message)}`;
           }
-          whatsappBtn.addEventListener('click', () => {
+
+          whatsappBtn.addEventListener('click', (e) => {
+            if (numbers.length > 1) {
+              e.preventDefault();
+              // Open a pre-filled chat for every configured number
+              numbers.forEach(num => {
+                window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+              });
+            }
             const replyEl = document.getElementById('whatsappAutoReply');
             const textEl = document.getElementById('autoReplyText');
             textEl.textContent = autoReply;

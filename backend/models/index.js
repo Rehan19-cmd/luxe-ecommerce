@@ -157,6 +157,8 @@ const siteSettingsSchema = new mongoose.Schema({
   subscriptionDiscountEnabled: { type: Boolean, default: false },
   discountPercent: { type: Number, default: 10 },
   whatsappNumber: { type: String, default: '' },
+  whatsappNumber2: { type: String, default: '' },
+  whatsappNumber3: { type: String, default: '' },
   whatsappAutoReply: { type: String, default: 'Thank you for contacting us. Our team will respond shortly.' },
 });
 
