@@ -19,3 +19,5 @@ services:
         sync: false
       - key: PAYPAL_APP_SECRET
         sync: false
+      - key: RENDER_EXTERNAL_URL
+        generateValue: false

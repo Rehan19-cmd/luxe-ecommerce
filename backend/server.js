@@ -98,6 +98,27 @@ try {
       console.log('✓ Connected to MongoDB');
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`✓ Server LIVE on port ${PORT}`);
+
+        // ── Keep-Alive Cron: Ping self every 14 min to prevent Render free-tier sleep ──
+        const RENDER_URL = process.env.RENDER_EXTERNAL_URL; // Auto-set by Render
+        if (RENDER_URL) {
+          const https = require('https');
+          const http = require('http');
+          const pingUrl = `${RENDER_URL}/api-status`;
+          const client = pingUrl.startsWith('https') ? https : http;
+
+          setInterval(() => {
+            client.get(pingUrl, (res) => {
+              console.log(`⏰ Keep-alive ping: ${res.statusCode}`);
+            }).on('error', (err) => {
+              console.warn('⏰ Keep-alive ping failed:', err.message);
+            });
+          }, 14 * 60 * 1000); // Every 14 minutes
+
+          console.log('⏰ Keep-alive cron started (every 14 min)');
+        } else {
+          console.log('ℹ No RENDER_EXTERNAL_URL — keep-alive cron skipped (local dev)');
+        }
       });
     })
     .catch((err) => {
