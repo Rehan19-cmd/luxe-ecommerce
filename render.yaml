@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: luxe-ecommerce
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm run render-build
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_APP_SECRET
+        sync: false
